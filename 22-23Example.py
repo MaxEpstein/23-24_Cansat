@@ -73,8 +73,8 @@ GPS_TIME = '00:00:00'
 MISSION_TIME = '00:00:00'
 internalpc = 0
 
-simulationMode = False
-simulationActivate = False
+simulationMode = True
+simulationActivate = True
 
 
 
