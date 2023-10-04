@@ -1,8 +1,8 @@
 # Resources/Documentation
 
-### Telemetry Team Details
+## Telemetry Team Details
 
-3.3.1 Telemetry
+### 3.3.1 Telemetry
 
 Upon power up, the Cansat shall collect the required telemetry at a one (1) Hz sample rate and transmit the telemetry data to the ground station. The ASCII format of the telemetry packets are described below. Each telemetry field is delimited by a comma, and each telemetry packet is terminated by a single carriage return character. No comma (`,`) characters should be part of the data fields -- commas are delimiters only.
 
