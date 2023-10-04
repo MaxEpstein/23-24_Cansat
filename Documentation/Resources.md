@@ -120,15 +120,15 @@ The Cansat payload shall operate in two modes:
 
 To understand the development flow for making changes to the project, refer to the following link. It describes the model you will follow for continuous development:
 
-[GitHub Flow](https://docs.github.com/en/get-started/quickstart/github-flow)
+- [GitHub Flow](https://docs.github.com/en/get-started/quickstart/github-flow)
 
 ## Useful Links for Understanding Project Dependencies
-[Basic NumPy Tutorial Guide - This is all we really need to know](https://numpy.org/doc/stable/user/absolute_beginners.html)
-[Matplotlib 3D Plotting](https://matplotlib.org/stable/plot_types/3D/index.html)
-[Matplotlib 2D Plotting](https://matplotlib.org/stable/plot_types/basic/index.html)
-[PySimpleGUI Embedded UI](https://www.pysimplegui.org/en/latest/#user-interfaces-for-humans-transforms-tkinter-qt-remi-wxpython-into-portable-people-friendly-pythonic-interfaces)
-[Serial Port Communication using PySerial](https://pyserial.readthedocs.io/en/latest/index.html)
-[Asynchronous Routines in Python - Low Level](https://docs.python.org/3/library/asyncio.html)
+- [Basic NumPy Tutorial Guide - This is all we really need to know](https://numpy.org/doc/stable/user/absolute_beginners.html)
+- [Matplotlib 3D Plotting](https://matplotlib.org/stable/plot_types/3D/index.html)
+- [Matplotlib 2D Plotting](https://matplotlib.org/stable/plot_types/basic/index.html)
+- [PySimpleGUI Embedded UI](https://www.pysimplegui.org/en/latest/#user-interfaces-for-humans-transforms-tkinter-qt-remi-wxpython-into-portable-people-friendly-pythonic-interfaces)
+- [Serial Port Communication using PySerial](https://pyserial.readthedocs.io/en/latest/index.html)
+- [Asynchronous Routines in Python - Low Level](https://docs.python.org/3/library/asyncio.html)
 
 ### Pandas Help Links
 
