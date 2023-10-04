@@ -11,6 +11,7 @@ Upon power up, the Cansat shall collect the required telemetry at a one (1) Hz s
 The Cansat telemetry packet format to be transmitted at one (1) Hz is as follows:
 TEAM_ID, MISSION_TIME, PACKET_COUNT, MODE, STATE, ALTITUDE, AIR_SPEED, HS_DEPLOYED, PC_DEPLOYED, TEMPERATURE, VOLTAGE, PRESSURE, GPS_TIME, GPS_ALTITUDE, GPS_LATITUDE, GPS_LONGITUDE, GPS_SATS, TILT_X, TILT_Y, ROT_Z, CMD_ECHO [,,OPTIONAL_DATA]
 
+
 The telemetry data fields are to be formatted as follows:
 1. `TEAM_ID` is the assigned four-digit team identification number. E.g., imaginary team '1000'.
 2. `MISSION_TIME` is UTC time in format hh:mm:ss, where hh is hours, mm is minutes, and ss is seconds. E.g., '13:14:02' indicates 1:14:02 PM.
@@ -39,7 +40,81 @@ The telemetry data fields are to be formatted as follows:
 The received telemetry for the entire mission shall be saved on the ground station computer as comma-separated value (.csv) files that will be examined by the competition judges in Excel. The CSV format should be the same as used by export from Excel. Teams shall provide the CSV file to the judges immediately after the launch operations via USB drive.
 
 The CSV files shall include a header specifying the name of each field/column of data in the file. The telemetry data files shall be named as follows:
-- `Flight_<TEAM_ID>.csv` where the team_id is the four-digit team id number. For example: `Flight_100
+- `Flight_<TEAM_ID>.csv` where the team_id is the four-digit team id number. For example: `Flight_1000.csv` is the required file name for imaginary team 1000.
+
+The ground software shall produce the files, with the correct name, easily from the ground system user interface, and save them to the provided USB memory stick, which is to be given to judges before leaving the launch area.
+
+### 3.3.2.3 On-board Telemetry Storage
+
+It is suggested that teams make use of onboard data storage as backup in case of radio failure. Only the transmitted telemetry is examined and scored on flight day; however, the backup data can be used when preparing the Post Flight Review presentation.
+
+## 3.3.2 Commands
+
+The payload shall receive and process the following commands from the Ground Station:
+
+- CX - Payload Telemetry On/Off Command
+CMD,<TEAM_ID>,CX,<ON_OFF>
+
+Where:
+- CMD and CX are static text.
+- <TEAM ID> is the assigned team identification.
+- <ON_OFF> is the string 'ON' to activate the payload telemetry transmissions and 'OFF' to turn off the transmissions.
+Example: The command `CMD,1000,CX,ON` activates payload telemetry transmission, assuming the team id is 1000.
+
+- ST - Set Time
+CMD,<TEAM_ID>,ST,<UTC_TIME>|GPS
+
+Where:
+- CMD and ST are static text.
+- <TEAM ID> is the assigned team identification.
+- <UTC_TIME>|GPS is UTC time in the format hh:mm:ss or 'GPS' which sets the flight software time to the current time read from the GPS module.
+Example: The command `CMD,1000,ST,13:35:59` sets the mission time to the value given, and the command `CMD,1000,ST,GPS` sets the time to the current GPS time. Note: It is recommended that the time be set directly from the Ground System time, in UTC, or from the GPS rather than being typed into the command manually.
+
+- SIM - Simulation Mode Control Command
+CMD,<TEAM_ID>,SIM,<MODE>
+
+Where:
+1. CMD and SIM are static text.
+2. `<TEAM_ID>` is the assigned team identification.
+3. `<MODE>` is the string 'ENABLE' to enable the simulation mode, 'ACTIVATE' to activate the simulation mode, or 'DISABLE' which both disables and deactivates the simulation mode.
+Example: Both the `CMD,1000,SIM,ENABLE` and `CMD,1000,SIM,ACTIVATE` commands are required to begin simulation mode.
+Note: It is advised that care be taken to not allow mixing of simulated and actual barometric altitude data. This caused at least one failure in the recent launches.
+
+- SIMP - Simulated Pressure Data (to be used in Simulation Mode only)
+CMD,<TEAM ID>,SIMP,<PRESSURE>
+
+Where:
+1. CMD and SIMP are static text.
+2. `<TEAM_ID>` is the assigned team identification.
+3. `<PRESSURE>` is the simulated atmospheric pressure data in units of pascals with a resolution of one Pascal.
+Example: `CMD,1000,SIMP,101325` provides a simulated pressure reading to the payload (101325 Pascals = approximately sea level). Note: this command is to be used only in simulation mode.
+Note: Pressure values in the SIMP profile are not calibrated to be relative to the launch site altitude, but are absolute altitudes above sea level.
+
+- CAL - Calibrate Altitude to Zero
+CMD,<TEAM ID>,CAL
+
+The CAL command is to be sent when the Cansat is installed on the launch pad and causes the flight software to calibrate the telemetered altitude to 0 meters.
+Note: This command also can be used by the flight software to reset and enable processor reset recovery algorithms. (Note: more than three teams failed to complete the mission last year because of processor resets during the launch; so, be prepared.)
+
+- BCN - Control Audio Beacon
+CMD,<TEAM ID>,BCN,ON|OFF
+
+Where:
+1. CMD and BCN are static text.
+2. `<TEAM_ID>` is the assigned team identification.
+3. `<ON|OFF>` are static strings 'ON' or 'OFF' that control the audio beacon.
+The BCN command allows the audio beacon, which is normally activated only upon landing, to be activated and deactivated for testing and inspection and the flight readiness review.
+
+- OPTIONAL - Optional Commands
+The team may implement additional commands that are useful for testing or controlling the Cansat. For example: it is a good idea to implement commands to activate mechanisms and the audible beacon for testing and demonstration purposes.
+Note: commanding during flight is a risky operation as radio links and precise timing are unreliable; so, autonomous Cansat flight software operation should be the primary mechanism for mission success.
+
+## 3.3.3 Simulation Mode
+
+The Cansat payload shall operate in two modes:
+- FLIGHT mode where the Cansat operates as described in the Mission Overview section using actual sensor data, and
+- SIMULATION mode where the Cansat receives simulated barometric pressure values from the Ground Station via SIMP commands and substitutes those values for the actual pressure sensor reading for calculation of altitude and for use by the flight software logic.
+
 
 ## Agile Workflow using Continuous Delivery/Integration Techniques
 
