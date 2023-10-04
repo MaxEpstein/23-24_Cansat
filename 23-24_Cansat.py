@@ -3,7 +3,6 @@
 
 def main():
     print("Telemetry Team Rules!")
-    print("WTF")
 
 
 if __name__=='__main__':
