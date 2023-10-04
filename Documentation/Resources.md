@@ -1,6 +1,6 @@
 # Resources/Documentation
 
-## Telemetry Team Details
+### Telemetry Team Details
 
 3.3.1 Telemetry
 
