@@ -10,26 +10,26 @@ def main():
     PC_DEPLOY = 'N' # 'C' indicates the parachute is deployed (at 100 m), 'N' otherwise.
     MODE = 'S' # 'F' for flight mode and 'S' for simulation mode.
     GPS_TIME = '00:00:00' # Is the time from the GPS receiver. The time must be reported in UTC and have a resolution of a second.
-    SS1 = 'U' # Software State - 'LAUNCH_WAIT', 'ASCENT', 'ROCKET_SEPARATION', 'DESCENT', 'HS_RELEASE', 'LANDED', or 'U' (undetermined)
+    SS1 = 'U' # Software State - Tells the state of the rocket - 'LAUNCH_WAIT', 'ASCENT', 'ROCKET_SEPARATION', 'DESCENT', 'HS_RELEASE', 'LANDED', or 'U' (undetermined)
 
 
     # Sets the color theme of the dashboard 
-    sg.theme('DarkAmber')   # Add a touch of color
+    sg.theme('DarkAmber')
 
     # All the stuff inside your window.
-    top_banner = [[sg.Text('Team ID: '+str(TEAM_ID), font='Any 26', background_color='#1B2838', border_width=(5), size=(40), key = 'TEAM_ID'),
+    top_banner = [sg.Text('Team ID: '+str(TEAM_ID), font='Any 26', background_color='#1B2838', border_width=(5), size=(40), key = 'TEAM_ID'),
             sg.Text(MISSION_TIME, font='Any 22', background_color='#1B2838', border_width=(8), size=(10), key = 'missionTime'),
             sg.Button('Calibrate', font='Any 16'),
             sg.Button('Connect', font='Any 16'),
-            sg.Button('Close', font='Any 16')]]
+            sg.Button('Close', font='Any 16')]
     
-    second_row = [[sg.Text('PC DEPOY: '+ PC_DEPLOY, size=(14), font='Any 16', background_color='#1B2838', key = 'PC_DEPLOY'),
+    second_row = [sg.Text('PC DEPOY: '+ PC_DEPLOY, size=(14), font='Any 16', background_color='#1B2838', key = 'PC_DEPLOY'),
             sg.Text('Mode: '+ MODE, size=(13), font='Any 16', background_color='#1B2838', key = 'MODE'),
             sg.Text('GPS Time: ' + GPS_TIME, size=(18), font='Any 16', background_color='#1B2838', key='gpsTime'),
-            sg.Text('Software State : '+SS1, size=(32), font='Any 16', background_color='#1B2838', key = 'STATE')]]
+            sg.Text('Software State : '+SS1, size=(32), font='Any 16', background_color='#1B2838', key = 'STATE')]
     
-    layout = [[top_banner],
-              [second_row]]
+    layout = [top_banner,
+              second_row]
     
     # Create the Window
     window = sg.Window('Window Title', layout)
