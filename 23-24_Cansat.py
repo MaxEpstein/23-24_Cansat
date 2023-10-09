@@ -2,8 +2,16 @@
 import PySimpleGUI as sg
 
 def main():
+    #Variables for first row 
     TEAM_ID = 1032 #CHANGE THIS. OLD TEAM ID NUM
-    MISSION_TIME = '1 second'
+    MISSION_TIME = '00:00:00' # In UTC time in hh:mm:ss
+
+    #Variables for second row
+    PC_DEPLOY = 'N' # 'C' indicates the parachute is deployed (at 100 m), 'N' otherwise.
+    MODE = 'S' # 'F' for flight mode and 'S' for simulation mode.
+    GPS_TIME = '00:00:00' # Is the time from the GPS receiver. The time must be reported in UTC and have a resolution of a second.
+    SS1 = 'U' # Software State - 'LAUNCH_WAIT', 'ASCENT', 'ROCKET_SEPARATION', 'DESCENT', 'HS_RELEASE', 'LANDED', or 'U' (undetermined)
+
 
     # Sets the color theme of the dashboard 
     sg.theme('DarkAmber')   # Add a touch of color
@@ -15,7 +23,13 @@ def main():
             sg.Button('Connect', font='Any 16'),
             sg.Button('Close', font='Any 16')]]
     
-    layout = [[top_banner]]
+    second_row = [[sg.Text('PC DEPOY: '+ PC_DEPLOY, size=(14), font='Any 16', background_color='#1B2838', key = 'PC_DEPLOY'),
+            sg.Text('Mode: '+ MODE, size=(13), font='Any 16', background_color='#1B2838', key = 'MODE'),
+            sg.Text('GPS Time: ' + GPS_TIME, size=(18), font='Any 16', background_color='#1B2838', key='gpsTime'),
+            sg.Text('Software State : '+SS1, size=(32), font='Any 16', background_color='#1B2838', key = 'STATE')]]
+    
+    layout = [[top_banner],
+              [second_row]]
     
     # Create the Window
     window = sg.Window('Window Title', layout)
