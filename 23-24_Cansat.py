@@ -2,15 +2,20 @@
 import PySimpleGUI as sg
 
 def main():
-    #Variables for first row 
+    # Variables used for the first row of the GUI
     TEAM_ID = 1032 #CHANGE THIS. OLD TEAM ID NUM
     MISSION_TIME = '00:00:00' # In UTC time in hh:mm:ss
 
-    #Variables for second row
+    # Variables used for the second row of the GUI 
     PC_DEPLOY = 'N' # 'C' indicates the parachute is deployed (at 100 m), 'N' otherwise.
     MODE = 'S' # 'F' for flight mode and 'S' for simulation mode.
     GPS_TIME = '00:00:00' # Is the time from the GPS receiver. The time must be reported in UTC and have a resolution of a second.
     SS1 = 'U' # Software State - Tells the state of the rocket - 'LAUNCH_WAIT', 'ASCENT', 'ROCKET_SEPARATION', 'DESCENT', 'HS_RELEASE', 'LANDED', or 'U' (undetermined)
+
+    # Variables used for the third row of the GUI 
+    HS_DEPLOY = 'N' # 'P' indicates the heat shield is deployed, 'N' otherwise.
+    MAST_RAISE  = '??' # Not sure what this means
+    GPS_SAT = 0 # Is the number of GPS satellites being tracked by the GPS receiver. This must be an integer.
 
 
     # Sets the color theme of the dashboard 
@@ -27,6 +32,12 @@ def main():
             sg.Text('Mode: '+ MODE, size=(13), font='Any 16', background_color='#1B2838', key = 'MODE'),
             sg.Text('GPS Time: ' + GPS_TIME, size=(18), font='Any 16', background_color='#1B2838', key='gpsTime'),
             sg.Text('Software State : '+SS1, size=(32), font='Any 16', background_color='#1B2838', key = 'STATE')]
+    
+    #third_row = [sg.Text('Packet Count: '+str(PC1), size=(17), font='Any 16', background_color='#1B2838', key = 'PC1'),
+    #        sg.Text('HS Deploy: '+HS_DEPLOY, size=(15), font='Any 16', background_color='#1B2838', key = 'HS_DEPLOY'),
+    #        sg.Text('Mast Raised: '+MAST_RAISE, size=(15), font='Any 16', background_color='#1B2838', key = 'MAST_RAISED'),
+    #        sg.Text('GPS Sat: ' +str(GPS_SAT), size=(13), font='Any 16', background_color='#1B2838', key = 'GPS_SAT'),
+    #        sg.Text('CMD Echo: '+CMD_ECHO, size=(25), font='Any 16', background_color='#1B2838', key = 'CMD_ECHO')]
     
     layout = [top_banner,
               second_row]
