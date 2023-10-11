@@ -1,5 +1,7 @@
 # 23-24 CanSat Source Code
 import PySimpleGUI as sg
+import matplotlib.pyplot as plt 
+
 
 def main():
     # Variables used for the first row of the GUI
@@ -15,7 +17,6 @@ def main():
     # Variables used for the third row of the GUI 
     PC1 = 0 # Number of packets of PC has?
     HS_DEPLOY = 'N' # 'P' indicates the heat shield is deployed, 'N' otherwise.
-    MAST_RAISE  = '??' # Not sure what this means
     GPS_SAT = 0 # Is the number of GPS satellites being tracked by the GPS receiver. This must be an integer.
     CMD_ECHO = "CXON" # Is the text of the last command received and processed by the Cansat. For example, CXON or SP101325. See the command section for details of command formats. Do not include com characters.
 
@@ -37,7 +38,6 @@ def main():
     
     third_row = [sg.Text('Packet Count: '+str(PC1), size=(17), font='Any 16', background_color='#1B2838', key = 'PC1'),
             sg.Text('HS Deploy: '+HS_DEPLOY, size=(15), font='Any 16', background_color='#1B2838', key = 'HS_DEPLOY'),
-            sg.Text('Mast Raised: '+MAST_RAISE, size=(15), font='Any 16', background_color='#1B2838', key = 'MAST_RAISED'),
             sg.Text('GPS Sat: ' +str(GPS_SAT), size=(13), font='Any 16', background_color='#1B2838', key = 'GPS_SAT'),
             sg.Text('CMD Echo: '+CMD_ECHO, size=(25), font='Any 16', background_color='#1B2838', key = 'CMD_ECHO')]
     
