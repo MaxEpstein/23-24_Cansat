@@ -1,9 +1,30 @@
 # 23-24 CanSat Source Code
 import PySimpleGUI as sg
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
+
+
+class graphs:
+    def __init__(self, graph_title: str, x_axis_title: str, y_axis_title: str):
+        fig = plt.figure90
+        plt.plot(x, y)
+        plt.title(graph_title)
+        plt.xlabel(x_axis_title)
+        plt.ylabel(y_axis_title)
 
 
 def main():
+    # List of graphs needed
+    list_of_graphs = ['Altitude (m) vs. Time (s)',
+                      'Temp (c) vs. Time (s)',
+                      'Voltage (volt) vs Time (s)',
+                      'Tilt X (deg) vs Time (s)',
+                      'Tilt Y (deg) vs Time (s)',
+                      'GPS Altitude (deg) vs Time (s)',
+                      'GPS Latitude (deg) vs Time (s)',
+                      'GPS Longitude (deg) vs Time (s)',
+                      'Acceleration (m/s^2) vs Time (s)']
+    
+
     # Variables used for the first row of the GUI
     TEAM_ID = 1032 #CHANGE THIS. OLD TEAM ID NUM
     MISSION_TIME = '00:00:00' # In UTC time in hh:mm:ss
@@ -15,7 +36,7 @@ def main():
     SS1 = 'U' # Software State - Tells the state of the rocket - 'LAUNCH_WAIT', 'ASCENT', 'ROCKET_SEPARATION', 'DESCENT', 'HS_RELEASE', 'LANDED', or 'U' (undetermined)
 
     # Variables used for the third row of the GUI 
-    PC1 = 0 # Number of packets of PC has?
+    PC1 = 0 # Number of packets PC has?
     HS_DEPLOY = 'N' # 'P' indicates the heat shield is deployed, 'N' otherwise.
     GPS_SAT = 0 # Is the number of GPS satellites being tracked by the GPS receiver. This must be an integer.
     CMD_ECHO = "CXON" # Is the text of the last command received and processed by the Cansat. For example, CXON or SP101325. See the command section for details of command formats. Do not include com characters.
@@ -41,9 +62,12 @@ def main():
             sg.Text('GPS Sat: ' +str(GPS_SAT), size=(13), font='Any 16', background_color='#1B2838', key = 'GPS_SAT'),
             sg.Text('CMD Echo: '+CMD_ECHO, size=(25), font='Any 16', background_color='#1B2838', key = 'CMD_ECHO')]
     
+    fourth_row = [sg.Canvas(key = 'Altitude (m) vs Time (s)')]
+    
     layout = [top_banner,
               second_row,
-              third_row]
+              third_row,
+              fourth_row]
     
     # Create the Window
     window = sg.Window('Window Title', layout)
