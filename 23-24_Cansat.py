@@ -2,7 +2,7 @@
 # Sarah Tran :)
 # Danush Singla :))
 # Matthew Lee 
-
+# Alex Segelnick
 def main():
     print("Telemetry Team Rules!")
 
