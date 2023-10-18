@@ -4,7 +4,6 @@
 # Alex Segelnick
 # Sarah Tran :)
 
-tran_pysimplegui_testing
 import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 
