@@ -1,4 +1,10 @@
 # 23-24 CanSat Source Code
+# Danush Singla :))
+# Matthew Lee 
+# Alex Segelnick
+# Sarah Tran :)
+
+tran_pysimplegui_testing
 import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 
@@ -35,6 +41,8 @@ class CanSat:
         self.HS_DEPLOY = 'N' # 'P' indicates the heat shield is deployed, 'N' otherwise.
         self.GPS_SATS = 0 # Is the number of GPS satellites being tracked by the GPS receiver. This must be an integer.
         self.CMD_ECHO = "CXON" # Is the text of the last command received and processed by the Cansat. For example, CXON or SP101325. See the command section for details of command formats. Do not include com characters.
+
+
 
 
 def main():
