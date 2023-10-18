@@ -5,11 +5,12 @@ import matplotlib.pyplot as plt
 
 class graphs:
     def __init__(self, graph_title: str, x_axis_title: str, y_axis_title: str):
-        fig = plt.figure90
+        fig = plt.figure()
         plt.plot(x, y)
         plt.title(graph_title)
         plt.xlabel(x_axis_title)
         plt.ylabel(y_axis_title)
+
 
 
 def main():
@@ -26,7 +27,7 @@ def main():
     
 
     # Variables used for the first row of the GUI
-    TEAM_ID = 1032 #CHANGE THIS. OLD TEAM ID NUM
+    TEAM_ID = 2031 #Team ID, given by the contest
     MISSION_TIME = '00:00:00' # In UTC time in hh:mm:ss
 
     # Variables used for the second row of the GUI 
@@ -62,12 +63,9 @@ def main():
             sg.Text('GPS Sat: ' +str(GPS_SAT), size=(13), font='Any 16', background_color='#1B2838', key = 'GPS_SAT'),
             sg.Text('CMD Echo: '+CMD_ECHO, size=(25), font='Any 16', background_color='#1B2838', key = 'CMD_ECHO')]
     
-    fourth_row = [sg.Canvas(key = 'Altitude (m) vs Time (s)')]
-    
     layout = [top_banner,
               second_row,
-              third_row,
-              fourth_row]
+              third_row]
     
     # Create the Window
     window = sg.Window('Window Title', layout)
