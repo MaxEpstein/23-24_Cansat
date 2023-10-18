@@ -90,39 +90,45 @@ directory = format(os.getcwd())
 def clock():
     return (time.strftime("%H:%M:%S", time.gmtime()))
 
+# First row of the GUI
 top_banner = [[sg.Text('Team ID: '+str(TEAM_ID), font='Any 26', background_color='#1B2838', border_width=(5), size=(40), key = 'TEAM_ID'),
                sg.Text(MISSION_TIME, font='Any 22', background_color='#1B2838', border_width=(8), size=(10), key = 'missionTime'),
                sg.Button('Calibrate', font='Any 16'),
                sg.Button('Connect', font='Any 16'),
                sg.Button('Close', font='Any 16')]]
 
+# Second row of the GUI 
 second_row = [[sg.Text('PC DEPOY: '+ PC_DEPLOY, size=(14), font='Any 16', background_color='#1B2838', key = 'PC_DEPLOY'),
                sg.Text('Mode: '+ MODE, size=(13), font='Any 16', background_color='#1B2838', key = 'MODE'),
                sg.Text('GPS Time: ' + GPS_TIME, size=(18), font='Any 16', background_color='#1B2838', key='gpsTime'),
                sg.Text('Software State : '+SS1, size=(32), font='Any 16', background_color='#1B2838', key = 'STATE')]]
 
+#Third row of the GUI 
 third_row = [[sg.Text('Packet Count: '+str(PC1), size=(17), font='Any 16', background_color='#1B2838', key = 'PC1'),
                sg.Text('HS Deploy: '+HS_DEPLOY, size=(15), font='Any 16', background_color='#1B2838', key = 'HS_DEPLOY'),
                sg.Text('Mast Raised: '+MAST_RAISE, size=(15), font='Any 16', background_color='#1B2838', key = 'MAST_RAISED'),
                sg.Text('GPS Sat: ' +str(GPS_SAT), size=(13), font='Any 16', background_color='#1B2838', key = 'GPS_SAT'),
                sg.Text('CMD Echo: '+CMD_ECHO, size=(25), font='Any 16', background_color='#1B2838', key = 'CMD_ECHO')]]
 
+#Fourth row of the GUI
 fourth_row = [[sg.Canvas(key='figCanvas0'),
                sg.Canvas(key='figCanvas1'),
                sg.Canvas(key='figCanvas2'),
                sg.Canvas(key='figCanvas3'),]]
 
+#Fifth row of the GUI
 fifth_row = [[sg.Canvas(key='figCanvas5'),
               sg.Canvas(key='figCanvas6'),
               sg.Canvas(key='figCanvas7'),
               sg.Canvas(key='figCanvas4'),]]
 
+#Sixth row of the GUI
 sixth_row = [[sg.Text('CMD', size=(8), font = 'Any 26', background_color='#1B2838'),
               sg.Input(size=(30)),
               sg.Button('Send',size=(18), font='Any 16'),
               sg.Text(' '*100)]]
 
-
+#Combines all the rows into one that will be displayed
 layout = [[top_banner],
           [second_row],
           [third_row],
