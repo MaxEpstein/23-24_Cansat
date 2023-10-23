@@ -20,6 +20,7 @@ class graphs:
 
 class CanSat:
     # TODO: Initialize each variable based on the ones listed in the resources
+
     def __init__(self):
         # Variables used for the first row of the GUI
         self.TEAM_ID = 2031 #Team ID, given by the contest
@@ -46,6 +47,12 @@ class CanSat:
         self.ROT_Z = 0 # Is the rotation angle of the CanSat along the Z axis. The rotation angle must be in degrees and have a resolution of a degree.
         
         self.CMD_ECHO = "CXON" # Is the text of the last command received and processed by the Cansat. For example, CXON or SP101325. See the command section for details of command formats. Do not include com characters.
+
+    #TODO: declare and define getter and setter functions within the class. The get function will retrieve/return the values, and the setter will update
+
+    def setData(self):
+        pass
+
 
 
 
@@ -74,13 +81,13 @@ def main():
             sg.Button('Connect', font='Any 16'),
             sg.Button('Close', font='Any 16')]
     
-    second_row = [sg.Text('PC DEPOY: '+ cansat.PC_DEPLOY, size=(14), font='Any 16', background_color='#1B2838', key = 'PC_DEPLOY'),
+    second_row = [sg.Text('PC DEPOY: '+ cansat.PC_DEPLOYED, size=(14), font='Any 16', background_color='#1B2838', key = 'PC_DEPLOYED'),
             sg.Text('Mode: '+ cansat.MODE, size=(13), font='Any 16', background_color='#1B2838', key = 'MODE'),
             sg.Text('GPS Time: ' + cansat.GPS_TIME, size=(18), font='Any 16', background_color='#1B2838', key='gpsTime'),
-            sg.Text('Software State : '+cansat.SS1, size=(32), font='Any 16', background_color='#1B2838', key = 'STATE')]
+            sg.Text('Software State : '+cansat.STATE, size=(32), font='Any 16', background_color='#1B2838', key = 'STATE')]
     
     third_row = [sg.Text('Packet Count: '+str(cansat.PACKET_COUNT), size=(17), font='Any 16', background_color='#1B2838', key = 'PC1'),
-            sg.Text('HS Deploy: '+cansat.HS_DEPLOY, size=(15), font='Any 16', background_color='#1B2838', key = 'HS_DEPLOY'),
+            sg.Text('HS Deployed: '+cansat.HS_DEPLOYED, size=(15), font='Any 16', background_color='#1B2838', key = 'HS_DEPLOYED'),
             sg.Text('GPS Sat: ' +str(cansat.GPS_SATS), size=(13), font='Any 16', background_color='#1B2838', key = 'GPS_SAT'),
             sg.Text('CMD Echo: '+cansat.CMD_ECHO, size=(25), font='Any 16', background_color='#1B2838', key = 'CMD_ECHO')]
     
