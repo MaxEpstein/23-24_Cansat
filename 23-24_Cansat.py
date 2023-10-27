@@ -50,11 +50,11 @@ class CanSat:
 
     def create_top_banner(self):
         return [
-            sg.Text('Team ID: ' + str(self.TEAM_ID), font=('Helvetica', 18), background_color='#1B2838', text_color='white', size=(25, 1), justification='left', key='TEAM_ID'),
-            sg.Text(self.MISSION_TIME, font=('Helvetica', 18), background_color='#1B2838', text_color='white', size=(10, 1), justification='right', key='missionTime'),
-            sg.Button('Calibrate', font=('Helvetica', 14)),
-            sg.Button('Connect', font=('Helvetica', 14)),
-            sg.Button('Close', font=('Helvetica', 14))
+            sg.Text('Team ID: ' + str(self.TEAM_ID), font=('Helvetica', 16), background_color='#1B2838', text_color='white', size=(20, 1), justification='left', key='TEAM_ID'),
+            sg.Text(self.MISSION_TIME, font=('Helvetica', 16), background_color='#1B2838', text_color='white', size=(10, 1), justification='right', key='missionTime'),
+            sg.Button('Calibrate', font=('Helvetica', 12)),
+            sg.Button('Connect', font=('Helvetica', 12)),
+            sg.Button('Close', font=('Helvetica', 12))
         ]
 
     def create_second_row(self):
@@ -100,6 +100,6 @@ class CanSat:
 def main():
     cansat = CanSat()
     cansat.run_gui()
-
+    
 if __name__=='__main__':
     main()
