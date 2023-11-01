@@ -32,7 +32,7 @@ The telemetry data fields are to be formatted as follows:
 17. `GPS_SATS` is the number of GPS satellites being tracked by the GPS receiver. This must be an integer.
 18. `TILT_X`, `TILT_Y` are the angles of the Cansat X and Y axes in degrees, with a resolution of 0.01 degrees, where zero degrees is defined as when the axes are perpendicular to the Z axis which is defined as towards the center of gravity of the Earth.
 19. `ROT_Z` is the rotation rate of the Cansat in degrees per second with a resolution of 0.1 degrees per second.
-20. `CMD_ECHO` is the text of the last command received and processed by the Cansat. For example, CXON or SP101325. See the command section for details of command formats. Do not include commas characters.
+20. `CMD_ECHO` is the text of the last command received and processed by the Cansat. For example, CXON or SP101325. See the command section for details of command formats. Do not include com characters.
 21. `[,,OPTIONAL_DATA]` are zero or more additional fields the team considers important following two commas, which indicate a blank field. This data must follow the same format rules (including the use of comma characters ',') to facilitate review of the CSV files by the judges after the mission.
 
 ### 3.3.1.2 Telemetry Data Files

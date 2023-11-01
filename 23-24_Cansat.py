@@ -1,36 +1,8 @@
 # 23-24 CanSat Source Code
 import PySimpleGUI as sg
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
-
-
-class Graph:
-    def __init__(self): # graph_title: str, x_axis_title: str, y_axis_title: str
-        self.graph = {} # Using a dictionary to store vertices and their connections
-
-    def add_vertex(self, vertex):
-        if vertex not in self.graph:
-            self.graph[vertex] = []
-
-    def add_edge(self, start_vertex, end_vertex):
-        if start_vertex in self.graph and end_vertex in self.graph:
-            self.graph[start_vertex].append(end_vertex)
-            self.graph[end_vertex].append(start_vertex)  # For an undirected graph
-
-    def draw_graph(self):
-        for vertex in self.graph:
-            for edge in self.graph[vertex]:
-                plt.plot([vertex[0], edge[0]], [vertex[1], edge[1]], 'bo-')  # 'bo-' specifies blue color, circle marker, and line style
-
-        for vertex in self.graph:
-            plt.plot(vertex[0], vertex[1], 'ro')  # 'ro' specifies red color and circle marker for vertices
-            plt.text(vertex[0], vertex[1], str(vertex))  # Adding labels to vertices
-
-        plt.title("Graph Visualization")
-        plt.xlabel("X-axis")
-        plt.ylabel("Y-axis")
-        plt.grid(True)
-        plt.show()
 
 
 class CanSat:
@@ -85,19 +57,65 @@ class CanSat:
             sg.Text('Packet Count: ' + str(self.PACKET_COUNT), font=('Helvetica', 14), background_color='#1B2838', text_color='white', size=(15, 1), justification='left', key='PC1'),
             sg.Text('HS Deploy: ' + self.HS_DEPLOYED, font=('Helvetica', 14), background_color='#1B2838', text_color='white', size=(15, 1), justification='left', key='HS_DEPLOY'),
             sg.Text('GPS Sat: ' + str(self.GPS_SATS), font=('Helvetica', 14), background_color='#1B2838', text_color='white', size=(12, 1), justification='left', key='GPS_SAT'),
-            sg.Text('CMD Echo: ' + self.CMD_ECHO, font=('Helvetica', 14), background_color='#1B2838', text_color='white', size=(25, 1), justification='left', key='CMD_ECHO')
+            sg.Text('CMD Echo: ' + self.CMD_ECHO, font=('Helvetica', 14), background_color='#1B2838', text_color='white', size=(25, 1), justification='left', key='CMD_ECHO'),
         ]
+    
+    def create_fourth_row(self):
+        return [
+            sg.Canvas(background_color= "black", size = (200, 200), key = 'Altitude (m) vs Time (s)'),
+            sg.Canvas(background_color= "black", size = (200, 200), key = 'Temp (c) vs Time (s)'),
+            sg.Canvas(background_color= "black", size = (200, 200), key = 'Voltage (volts) vs Time (s)'),
+            sg.Canvas(background_color= "black", size = (200, 200), key = 'Acceleration (m/s^2) vs Time (s)')
+        ]
+    
+    def create_fifth_row(self):
+        return [
+            sg.Canvas(background_color= "black", size = (200, 200), key = 'TiltX (deg) vs Time (s)'),
+            sg.Canvas(background_color= "black", size = (200, 200), key = 'TiltY (deg) vs Time (s)'),
+            sg.Canvas(background_color= "black", size = (200, 200), key = 'TiltZ (deg) vs Time (s)')
+        ]
+    
+    def create_sixth_row(self):
+        return[
+            sg.Canvas(background_color= "black", size = (200, 200), key = 'GPS ALT (deg) vs Time (s)'),
+            sg.Canvas(background_color= "black", size = (200, 200), key = 'GPS LAT (deg) vs Time (s)'),
+            sg.Canvas(background_color= "black", size = (200, 200), key = 'GPS LONG (deg) vs Time (s)')
+        ]
+    
+    def create_seventh_row(self):
+        return[
+            sg.Text('CMD', size=(8), font = 'Any 26', background_color='#1B2838'),
+            sg.Input(size=(30)),
+            sg.Button('Send',size=(18), font='Any 16'),
+            sg.Text(' '*100)
+        ]
+
+    # This was in Max's code and I've been seeing it when I look it up. Idk what this does. - Sarah
+    def draw_figure(canvas, figure):
+        figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
+        figure_canvas_agg.draw()
+        figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+        return figure_canvas_agg
+
 
     # Creates the main GUI to display 
     def create_gui_layout(self):
         top_banner = self.create_top_banner()
         second_row = self.create_second_row()
         third_row = self.create_third_row()
-        
+        fourth_row = self.create_fourth_row()
+        fifth_row = self.create_fifth_row()
+        sixth_row = self.create_sixth_row()
+        seventh_row = self.create_seventh_row()
+
         layout = [
             top_banner,
             second_row,
-            third_row
+            third_row,
+            fourth_row,
+            fifth_row,
+            sixth_row,
+            seventh_row
         ]
         return layout
 
@@ -113,22 +131,42 @@ class CanSat:
 
         window.close()
 
+
+class Graph(CanSat):
+    def __init__(self, graph_title: str, x_axis_title: str, y_axis_title: str): 
+        self.graph = {} # Using a dictionary to store vertices and their connections
+        plt.title(graph_title)
+        plt.xlabel(x_axis_title)
+        plt.ylabel(y_axis_title)
+
+    # Put in a new data point 
+    def add_point(self, point):
+        if point not in self.graph:
+            self.graph[point] = []
+
+    # Add a line between two points
+    def add_edge(self, start_point, end_point):
+        if start_point in self.graph and end_point in self.graph:
+            self.graph[start_point].append(end_point)
+            self.graph[end_point].append(start_point)  # For an undirected graph
+
+    # Draws the graph
+    def draw_graph(self):
+        for vertex in self.graph:
+            for edge in self.graph[vertex]:
+                plt.plot([vertex[0], edge[0]], [vertex[1], edge[1]], 'bo-')  # 'bo-' specifies blue color, circle marker, and line style
+
+        for vertex in self.graph:
+            plt.plot(vertex[0], vertex[1], 'ro')  # 'ro' specifies red color and circle marker for vertices
+            plt.text(vertex[0], vertex[1], str(vertex))  # Adding labels to vertices
+
+        plt.grid(False)
+        plt.show()
+
+
 def main():
     cansat = CanSat()
-    # cansat.run_gui()
-
-    testing = Graph()
-    testing.add_vertex((0, 0))
-    testing.add_vertex((1, 1))
-    testing.add_vertex((2, 2))
-    testing.add_vertex((3, 3))
-
-    testing.add_edge((0, 0), (1, 1))
-    testing.add_edge((1, 1), (2, 2))
-    testing.add_edge((2, 2), (3, 3))
-    testing.add_edge((3, 3), (0, 0))
-
-    testing.draw_graph()
+    cansat.run_gui()
     
 if __name__=='__main__':
     main()
