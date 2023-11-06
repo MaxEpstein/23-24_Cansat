@@ -6,6 +6,7 @@
 
 import PySimpleGUI as sg
 import matplotlib.pyplot as plt
+import csv
 
 
 """ # Not sure if this is possible. I wanted to make a class of graphs that we're using
@@ -96,10 +97,87 @@ class CanSat:
                 break
 
         window.close()
+    #TODO: declare and define getter and setter functions within the class. The get function will retrieve/return the values, and the setter will update
+
+    def setData(self):
+        # Open file  
+        with open(r"samplecsv.csv") as file:     # changed 'samplecsv.csv' to correct csv filename
+      
+            # creates reader that reads the file
+            reader = csv.reader(file)
+
+            i = 0
+            for row in reader:          # iterates through row because the type of reader is csv_reader which does not allow access to specific indices
+                if i == 0:
+                    titles = row        # this reads the first row of the file, which are the names of each category
+                if i == 1:
+                    values = row        # this reads the second row of the file, which are the latest values of each category
+                    break               # we only need the first two rows so break out
+                i += 1
+        
+        for i in range(len(titles)):        # goes through both lists
+            if titles[i] == 'MISSION_TIME':
+                self.MISSION_TIME = values[i]
+            if titles[i] == 'PACKET_COUNT':
+                self.PACKET_COUNT = values[i]       # does this because each index corresponds to the title and its respective value
+            if titles[i] == 'MODE':
+                self.MODE = values[i]
+            if titles[i] == 'STATE':
+                self.STATE = values[i]
+            if titles[i] == 'ALTITUDE':
+                self.ALTITUDE = values[i]
+            if titles[i] == 'AIR_SPEED':
+                self.AIR_SPEED = values[i]
+            if titles[i] == 'HS_DEPLOYED':
+                self.HS_DEPLOYED = values[i]
+            if titles[i] == 'PC_DEPLOYED':
+                self.PC_DEPLOYED = values[i]
+            if titles[i] == 'TEMPERATURE':
+                self.TEMPERATURE = values[i]
+            if titles[i] == 'PRESSURE':
+                self.PRESSURE = values[i]
+            if titles[i] == 'VOLTAGE':
+                self.VOLTAGE = values[i]
+            if titles[i] == 'GPS_TIME':
+                self.GPS_TIME = values[i]
+            if titles[i] == 'GPS_ALTITUDE':
+                self.GPS_ALTITUDE = values[i]
+            if titles[i] == 'GPS_LATITUDE':
+                self.GPS_LATITUDE = values[i]
+            if titles[i] == 'GPS_LONGITUDE':
+                self.GPS_LONGITUDE = values[i]
+            if titles[i] == 'GPS_SATS':
+                self.GPS_SATS = values[i]
+            if titles[i] == 'TILT_X':
+                self.TILT_X = values[i]
+            if titles[i] == 'TILT_Y':
+                self.TILT_Y = values[i]
+            if titles[i] == 'TILT_Z':
+                self.TILT_Z = values[i]
+            if titles[i] == 'ROT_Z':
+                self.ROT_Z = values[i]
+    
+    def get_details(self):
+        return self.MISSION_TIME, self.PACKET_COUNT, self.MODE, self.STATE, self.HS_DEPLOYED, self.PC_DEPLOYED
+    
+    def get_measurements(self):
+        return self.ALTITUDE, self.AIR_SPEED, self.TEMPERATURE, self.PRESSURE, self.VOLTAGE
+    
+    def get_GPS(self):
+        return self.GPS_TIME, self.GPS_ALTITUDE, self.GPS_LATITUDE, self.GPS_LONGITUDE, self.GPS_SATS
+    
+    def get_direction(self):
+        return self.TILT_X, self.TILT_Y, self.TILT_Z, self.ROT_Z
+
+
+
+
 
 def main():
     cansat = CanSat()
     cansat.run_gui()
     
 if __name__=='__main__':
-    main()
+    # main()
+    cansat = CanSat()
+    cansat.setData()
