@@ -1,8 +1,12 @@
 # 23-24 CanSat Source Code
+# Team Lead: Steele Elliott
+
+# Members: 
 # Danush Singla :))
 # Matthew Lee 
 # Alex Segelnick
 # Sarah Tran :)
+# Dylan Manauasa
 
 import PySimpleGUI as sg
 import matplotlib.pyplot as plt
