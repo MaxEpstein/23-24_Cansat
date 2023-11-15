@@ -2,10 +2,10 @@
 # Team Lead: Steele Elliott
 
 # Members: 
-# Danush Singla :))
+# Danush Singla
 # Matthew Lee 
 # Alex Segelnick
-# Sarah Tran :)
+# Sarah Tran 
 # Dylan Manauasa
 
 import PySimpleGUI as sg
@@ -74,15 +74,43 @@ class CanSat:
             sg.Text('CMD Echo: ' + self.data['CMD_ECHO'], font=('Helvetica', 14), background_color='#1B2838', text_color='white', size=(25, 1), justification='left', key='CMD_ECHO')
         ]
 
+    def create_fourth_row(self):
+        return [
+            sg.Canvas(background_color="black", size=(250, 250)), # Altitude (m) vs Time (s)
+            sg.Canvas(background_color="black", size=(250, 250)), # Temperature (C) vs Time (s)
+            sg.Canvas(background_color="black", size=(250, 250)), # Voltage (Volts) vs Time (s)
+            sg.Canvas(background_color="black", size=(250, 250))  # Acceleration (m/s^2) vs Time (s)
+        ]
+    
+    def create_fifth_row(self):
+        return[
+            sg.Canvas(background_color="black", size=(250, 250)), # Tilt X (deg) vs Time (s)
+            sg.Canvas(background_color="black", size=(250, 250)), # Tilt Y (deg) vs Time (s)
+            sg.Canvas(background_color="black", size=(250, 250))  # Tilt Z (deg) vs Time (s)
+        ]
+    
+    def create_sixth_row(self):
+        return[
+            sg.Canvas(background_color="black", size=(250, 250)), # GPS Altitude (deg) vs Time (s)
+            sg.Canvas(background_color="black", size=(250, 250)), # GPS Latitude (deg) vs Time (s)
+            sg.Canvas(background_color="black", size=(250, 250))  # GPS Longitude (deg) vs Time (s)
+        ]
+
     def create_gui_layout(self):
         top_banner = self.create_top_banner()
         second_row = self.create_second_row()
         third_row = self.create_third_row()
+        fourth_row = self.create_fourth_row()
+        fifth_row = self.create_fifth_row()
+        sixth_row = self.create_sixth_row()
         
         layout = [
             top_banner,
             second_row,
-            third_row
+            third_row,
+            fourth_row,
+            fifth_row, 
+            sixth_row
         ]
         return layout
 
