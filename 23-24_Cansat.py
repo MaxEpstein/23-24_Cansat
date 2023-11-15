@@ -1,3 +1,4 @@
+
 # 23-24 CanSat Source Code
 # Team Lead: Steele Elliott
 
@@ -7,13 +8,13 @@
 # Alex Segelnick
 # Sarah Tran 
 # Dylan Manauasa
-
+import pandas as pd
 import PySimpleGUI as sg
 import matplotlib.pyplot as plt
-import csv
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class CanSat:
-    def __init__(self):
+    def __init__(self, csv_file_path):
         self.data = {
             'TEAM_ID': 2031,
             'MISSION_TIME': '00:00:00',
@@ -39,15 +40,30 @@ class CanSat:
             'CMD_ECHO': "CXON"
         }
 
-    # Set values for multiple variables using a dictionary
-    def set_values(self, data_dict):
-        for key, value in data_dict.items():
-            if key in self.data:
-                self.data[key] = value
+        self.fig, self.ax = plt.subplots(figsize=(6, 3))
+        self.canvas_elem = FigureCanvasTkAgg(self.fig, master=None)
+        self.layout = self.create_gui_layout()
+        self.csv_file_path = csv_file_path
+        self.df = pd.read_csv(self.csv_file_path)
 
-    # Get values for multiple variables using a list of keys
-    def get_values(self, keys):
-        return {key: self.data[key] for key in keys}
+    def create_graph_canvas(self):
+        return sg.Canvas(
+            key='graph_canvas',
+            background_color='white',
+            size=(400, 200),
+            pad=(10, 10)
+        )
+
+    def display_graph(self, x_data, y_data, x_label, y_label, title):
+        self.ax.clear()
+        self.ax.plot(x_data, y_data, marker='o')
+        self.ax.set_xlabel(x_label)
+        self.ax.set_ylabel(y_label)
+        self.ax.set_title(title)
+        self.canvas_elem.get_tk_widget().pack_forget()
+        self.canvas_elem = FigureCanvasTkAgg(self.fig, master=self.window['graph_canvas'].TKCanvas)
+        self.canvas_elem.get_tk_widget().pack(fill='both', expand=True)
+        self.canvas_elem.draw()
 
     def create_top_banner(self):
         return [
@@ -103,7 +119,6 @@ class CanSat:
         fourth_row = self.create_fourth_row()
         fifth_row = self.create_fifth_row()
         sixth_row = self.create_sixth_row()
-        
         layout = [
             top_banner,
             second_row,
@@ -111,36 +126,13 @@ class CanSat:
             fourth_row,
             fifth_row, 
             sixth_row
+
+            [self.create_graph_canvas()],  # Add the graph canvas to the layout
         ]
         return layout
 
-    def run_gui(self):
-        sg.theme('DarkBlue3')
-        layout = self.create_gui_layout()
-        window = sg.Window('CanSat Dashboard', layout, finalize=True)
-
-        while True:
-            event, values = window.read()
-            if event == sg.WIN_CLOSED or event == 'Close':
-                break
-
-        window.close()
-
-    def setData(self):
-        # Open file
-        with open("Sample_Flight.csv") as file:  # Replace with your CSV file path
-            reader = csv.reader(file)
-            i = 0
-            for row in reader:
-                if i == 0:
-                    titles = row
-                if i == 1:
-                    values = row
-                    break
-                i += 1
-
-        data_dict = {titles[i]: values[i] for i in range(len(titles))}
-        self.set_values(data_dict)
+    def set_data(self, data_dict):
+        self.data.update(data_dict)
 
     def get_details(self):
         keys = ['MISSION_TIME', 'PACKET_COUNT', 'MODE', 'STATE', 'HS_DEPLOYED', 'PC_DEPLOYED']
@@ -158,10 +150,28 @@ class CanSat:
         keys = ['TILT_X', 'TILT_Y', 'TILT_Z', 'ROT_Z']
         return self.get_values(keys)
 
+    def get_values(self, keys):
+        return {key: self.data[key] for key in keys}
+
+    def run_gui(self):
+        sg.theme('DarkBlue3')
+        self.window = sg.Window('CanSat Dashboard', self.layout, finalize=True)
+
+        while True:
+            event, values = self.window.read()
+            if event == sg.WIN_CLOSED or event == 'Close':
+                break
+
+            if event == 'Display Altitude vs. Mission Time':
+                x_data = self.df['MISSION_TIME']
+                y_data = self.df['ALTITUDE']
+                self.display_graph(x_data, y_data, 'Mission Time', 'Altitude (meters)', 'Altitude vs. Mission Time')
+
+        self.window.close()
 
 def main():
-    cansat = CanSat()
-    cansat.setData()
+    csv_file_path = "Sample_Flight.csv"
+    cansat = CanSat(csv_file_path)
     cansat.run_gui()
 
 if __name__ == '__main__':
