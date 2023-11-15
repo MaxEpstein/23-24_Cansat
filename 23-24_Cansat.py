@@ -125,7 +125,7 @@ class CanSat:
             third_row,
             fourth_row,
             fifth_row, 
-            sixth_row
+            sixth_row,
 
             [self.create_graph_canvas()],  # Add the graph canvas to the layout
         ]
