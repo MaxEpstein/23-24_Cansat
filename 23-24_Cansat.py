@@ -45,7 +45,34 @@ class CanSat:
         self.layout = self.create_gui_layout()
         self.csv_file_path = csv_file_path
         self.df = pd.read_csv(self.csv_file_path)
-
+        
+    def init_graphs(self):
+        self.graphs = {
+            'altitude': plt.subplots(figsize=(3.5, 3.5)),
+            'temperature': plt.subplots(figsize=(3.5, 3.5)),
+            'voltage': plt.subplots(figsize=(3.5, 3.5)),
+            'tilt_x': plt.subplots(figsize=(3.5, 3.5)),
+            'tilt_y': plt.subplots(figsize=(3.5, 3.5)),
+            'tilt_z': plt.subplots(figsize=(3.5, 3.5)),
+            'gps_altitude': plt.subplots(figsize=(3.5, 3.5)),
+            'gps_latitude': plt.subplots(figsize=(3.5, 3.5)),
+            'gps_longitude': plt.subplots(figsize=(3.5, 3.5))
+        }
+        self.graph_canvases = {}
+        for i, (key, (fig, ax)) in enumerate(self.graphs.items()):
+            canvas = FigureCanvasTkAgg(fig, master=self.window[f'graph_canvas_{i}'].TKCanvas)
+            canvas_widget = canvas.get_tk_widget()
+            canvas_widget.pack(fill='both', expand=True)
+            self.graph_canvases[key] = (canvas, canvas_widget)
+        
+    def update_graphs(self, data):
+        for key, (fig, ax) in self.graphs.items():
+            ax.clear()
+            ax.plot(data['time'], data[key])
+            ax.set_xlabel('Time')
+            ax.set_ylabel(key.capitalize())
+            ax.set_title(f'{key.capitalize()} vs Time')
+               
     def create_graph_canvas(self):
         return sg.Canvas(
             key='graph_canvas',
@@ -54,16 +81,11 @@ class CanSat:
             pad=(10, 10)
         )
 
-    def display_graph(self, x_data, y_data, x_label, y_label, title):
-        self.ax.clear()
-        self.ax.plot(x_data, y_data, marker='o')
-        self.ax.set_xlabel(x_label)
-        self.ax.set_ylabel(y_label)
-        self.ax.set_title(title)
-        self.canvas_elem.get_tk_widget().pack_forget()
-        self.canvas_elem = FigureCanvasTkAgg(self.fig, master=self.window['graph_canvas'].TKCanvas)
-        self.canvas_elem.get_tk_widget().pack(fill='both', expand=True)
-        self.canvas_elem.draw()
+    def display_all_graphs(self):
+        for key, (fig, ax) in self.graphs.items():
+            canvas, canvas_widget = self.graph_canvases[key]
+            canvas.draw()
+
 
     def create_top_banner(self):
         return [
@@ -92,24 +114,24 @@ class CanSat:
 
     def create_fourth_row(self):
         return [
-            sg.Canvas(background_color="black", size=(250, 250)), # Altitude (m) vs Time (s)
-            sg.Canvas(background_color="black", size=(250, 250)), # Temperature (C) vs Time (s)
-            sg.Canvas(background_color="black", size=(250, 250)), # Voltage (Volts) vs Time (s)
-            sg.Canvas(background_color="black", size=(250, 250))  # Acceleration (m/s^2) vs Time (s)
+            sg.Canvas(key='graph_canvas_0', background_color="black", size=(250, 250)), # Altitude (m) vs Time (s)
+            sg.Canvas(key='graph_canvas_1', background_color="black", size=(250, 250)), # Temperature (C) vs Time (s)
+            sg.Canvas(key='graph_canvas_2', background_color="black", size=(250, 250)), # Voltage (Volts) vs Time (s)
+            sg.Canvas(key='graph_canvas_3', background_color="black", size=(250, 250))  # Acceleration (m/s^2) vs Time (s)
         ]
-    
+
     def create_fifth_row(self):
         return[
-            sg.Canvas(background_color="black", size=(250, 250)), # Tilt X (deg) vs Time (s)
-            sg.Canvas(background_color="black", size=(250, 250)), # Tilt Y (deg) vs Time (s)
-            sg.Canvas(background_color="black", size=(250, 250))  # Tilt Z (deg) vs Time (s)
+            sg.Canvas(key='graph_canvas_4', background_color="black", size=(250, 250)), # Tilt X (deg) vs Time (s)
+            sg.Canvas(key='graph_canvas_5', background_color="black", size=(250, 250)), # Tilt Y (deg) vs Time (s)
+            sg.Canvas(key='graph_canvas_6', background_color="black", size=(250, 250))  # Tilt Z (deg) vs Time (s)
         ]
-    
+
     def create_sixth_row(self):
         return[
-            sg.Canvas(background_color="black", size=(250, 250)), # GPS Altitude (deg) vs Time (s)
-            sg.Canvas(background_color="black", size=(250, 250)), # GPS Latitude (deg) vs Time (s)
-            sg.Canvas(background_color="black", size=(250, 250))  # GPS Longitude (deg) vs Time (s)
+            sg.Canvas(key='graph_canvas_7', background_color="black", size=(250, 250)), # GPS Altitude (deg) vs Time (s)
+            sg.Canvas(key='graph_canvas_8', background_color="black", size=(250, 250)), # GPS Latitude (deg) vs Time (s)
+            sg.Canvas(key='graph_canvas_9', background_color="black", size=(250, 250))  # GPS Longitude (deg) vs Time (s)
         ]
 
     def create_gui_layout(self):
@@ -156,18 +178,46 @@ class CanSat:
     def run_gui(self):
         sg.theme('DarkBlue3')
         self.window = sg.Window('CanSat Dashboard', self.layout, finalize=True)
+        self.init_graphs()
 
         while True:
-            event, values = self.window.read()
+            event, values = self.window.read(timeout=1000)  # Example: Update every second
             if event == sg.WIN_CLOSED or event == 'Close':
                 break
 
-            if event == 'Display Altitude vs. Mission Time':
-                x_data = self.df['MISSION_TIME']
-                y_data = self.df['ALTITUDE']
-                self.display_graph(x_data, y_data, 'Mission Time', 'Altitude (meters)', 'Altitude vs. Mission Time')
+            # Simulate data update; replace this with actual data reading logic
+            new_data = self.simulate_data_update()
+            self.update_graphs(new_data)
+            self.display_all_graphs()
 
         self.window.close()
+
+    # Placeholder for data update simulation
+    def simulate_data_update(self):
+        # Read the CSV file
+        df = pd.read_csv(self.csv_file_path)
+
+        # You can use the tail method to get the most recent data, for simulation purposes
+        latest_data = df.tail(1)
+
+        # Extract the necessary columns and convert them to the appropriate format
+        # Adjust the keys according to your graph labels
+        simulation_data = {
+            'time': [latest_data['MISSION_TIME'].iloc[0]],
+            'altitude': [latest_data['ALTITUDE'].iloc[0]],
+            'temperature': [latest_data['TEMPERATURE'].iloc[0]],
+            'voltage': [latest_data['VOLTAGE'].iloc[0]],
+            'tilt_x': [latest_data['TILT_X'].iloc[0]],
+            'tilt_y': [latest_data['TILT_Y'].iloc[0]],
+            'tilt_z': [latest_data['TILT_Z'].iloc[0]],
+            'gps_altitude': [latest_data['GPS_ALTITUDE'].iloc[0]],
+            'gps_latitude': [latest_data['GPS_LATITUDE'].iloc[0]],
+            'gps_longitude': [latest_data['GPS_LONGITUDE'].iloc[0]],
+            # Add other necessary fields here
+        }
+
+        return simulation_data
+
 
 def main():
     csv_file_path = "Sample_Flight.csv"
