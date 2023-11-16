@@ -119,13 +119,14 @@ class CanSat:
         fourth_row = self.create_fourth_row()
         fifth_row = self.create_fifth_row()
         sixth_row = self.create_sixth_row()
+
         layout = [
             top_banner,
             second_row,
             third_row,
             fourth_row,
             fifth_row, 
-            sixth_row
+            sixth_row, 
 
             [self.create_graph_canvas()],  # Add the graph canvas to the layout
         ]
