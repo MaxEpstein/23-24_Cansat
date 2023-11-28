@@ -16,27 +16,27 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 class CanSat:
     def __init__(self, csv_file_path):
         self.data = {
-            'TEAM_ID': 2031,
-            'MISSION_TIME': '00:00:00',
-            'PACKET_COUNT': 0,
-            'MODE': 'S',
-            'STATE': 'U',
-            'ALTITUDE': 0,
-            'AIR_SPEED': 0,
-            'HS_DEPLOYED': 'N',
-            'PC_DEPLOYED': 'N',
-            'TEMPERATURE': 0,
-            'PRESSURE': 0,
-            'VOLTAGE': 0,
-            'GPS_TIME': '00:00:00',
-            'GPS_ALTITUDE': 0,
-            'GPS_LATITUDE': 0,
-            'GPS_LONGITUDE': 0,
-            'GPS_SATS': 0,
-            'TILT_X': 0,
-            'TILT_Y': 0,
-            'ROT_Z': 0,
-            'CMD_ECHO': "CXON"
+            'TEAM_ID': 2031, 
+            'MISSION_TIME': '00:00:00', # UTC time in hh:mm:ss
+            'PACKET_COUNT': 0, # The total count of transmitted packets since turned on reset to zero by command when the CanSat is installed in the rocket on the launch pad at the beginning of the mission and maintained through processor reset.
+            'MODE': 'S', # 'F' for flight mode and 'S' for simulation mode.
+            'STATE': 'U', # The operation state of the software. (LAUNCH_WAIT, ASCENT, ROCKET_SEPERATION, DESCENT, HS_RELEASE, LANDED, etc).
+            'ALTITUDE': 0, # In units of meters and must be relative to ground level at the launch site. 
+            'AIR_SPEED': 0, # In meters/second measured with the pitot tube during both ascent and descent.
+            'HS_DEPLOYED': 'N', # 'P' indicates the heat shield is deployed, 'N' otherwise.
+            'PC_DEPLOYED': 'N', # 'C' indicates he parachute is deployed (at 100m), 'N' otherwise. 
+            'TEMPERATURE': 0, # In degrees Celsius
+            'PRESSURE': 0, # In kPa. Air pressure of the censor used. 
+            'VOLTAGE': 0, # Voltage of the Cansat power bus 
+            'GPS_TIME': '00:00:00', # In UTC. Time from the GPS reciever. 
+            'GPS_ALTITUDE': 0, # In meters. The altitude from the GPS reciever above mean sea level.
+            'GPS_LATITUDE': 0, # In degrees North. The latitude from the GPS reciever.
+            'GPS_LONGITUDE': 0, # In degrees West. The longitude from the GPS reciever.
+            'GPS_SATS': 0, # In int. Number of GPS satellites being tracked by the GPS reciever. 
+            'TILT_X': 0, # In angle degrees of the CanSat on the x-axis.
+            'TILT_Y': 0, # In angle degrees of the CanSat on the y-axis.
+            'ROT_Z': 0, # In degrees/second. The rotation rate of the CanSat.
+            'CMD_ECHO': "CXON" # Text of the last command recieved and processed by the CanSat.
         }
         self.csv_file_path = csv_file_path
         self.df = pd.read_csv(self.csv_file_path)
