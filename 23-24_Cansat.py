@@ -260,7 +260,9 @@ class CanSat:
         self.window['CMD_ECHO'].update('CMD Echo: ' + self.data['CMD_ECHO'])
         self.window['GPS_TIME'].update('GPS Time: ' + self.data['GPS_TIME'])
         # Add additional updates for other parameters
-        self.window['ALTITUDE'].update('Altitude: ' + str(self.data['ALTITUDE']))
+        #DO NOT INCLUDE
+        '''
+        self.window['altitude'].update('Altitude: ' + str(self.data['ALTITUDE']))
         self.window['AIR_SPEED'].update('Air Speed: ' + str(self.data['AIR_SPEED']))
         self.window['TEMPERATURE'].update('Temperature: ' + str(self.data['TEMPERATURE']))
         self.window['PRESSURE'].update('Pressure: ' + str(self.data['PRESSURE']))
@@ -271,6 +273,7 @@ class CanSat:
         self.window['TILT_X'].update('Tilt X: ' + str(self.data['TILT_X']))
         self.window['TILT_Y'].update('Tilt Y: ' + str(self.data['TILT_Y']))
         self.window['ROT_Z'].update('Rot Z: ' + str(self.data['ROT_Z']))
+        '''
 
 
 def main():
