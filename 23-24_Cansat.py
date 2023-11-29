@@ -13,11 +13,15 @@ import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # Define a consistent color scheme and fonts
-PRIMARY_COLOR = '#1B2838'  # Dark background color
-TEXT_COLOR = 'white'
-GRAPH_BACKGROUND_COLOR = 'black'
-FONT_MAIN = ('Helvetica', 14)
+# Updated color constants
+# Updated color constants
+PRIMARY_COLOR = '#1B2838'  # Dark background color for the GUI
+TEXT_COLOR = 'white'  # Text color for GUI elements on the primary background
+GRAPH_BACKGROUND_COLOR = 'white'  # White background color for graphs
+GRAPH_TEXT_COLOR = 'white'  # Text color for graph labels, titles, and axes
+# Font definitions
 FONT_TITLE = ('Helvetica', 16)
+FONT_MAIN = ('Helvetica', 14)
 FONT_BUTTON = ('Helvetica', 12)
 class CanSat:
     def __init__(self, csv_file_path):
@@ -68,10 +72,10 @@ class CanSat:
         }
         for key, (fig, ax) in self.graphs.items():
             ax.set_facecolor(GRAPH_BACKGROUND_COLOR)
-            ax.tick_params(colors=TEXT_COLOR)
-            ax.xaxis.label.set_color(TEXT_COLOR)
-            ax.yaxis.label.set_color(TEXT_COLOR)
-            ax.title.set_color(TEXT_COLOR)
+            ax.tick_params(colors=GRAPH_TEXT_COLOR)
+            ax.xaxis.label.set_color(GRAPH_TEXT_COLOR)
+            ax.yaxis.label.set_color(GRAPH_TEXT_COLOR)
+            ax.title.set_color(GRAPH_TEXT_COLOR)
             fig.patch.set_facecolor(PRIMARY_COLOR)
 
             # Create canvas as before
@@ -84,10 +88,10 @@ class CanSat:
         for key, (fig, ax) in self.graphs.items():
             ax.clear()
             if key in data and 'time' in data and len(data[key]) == len(data['time']):
-                ax.plot(data['time'], data[key])
-                ax.set_xlabel('Time')
-                ax.set_ylabel(key.capitalize())
-                ax.set_title(f'{key.capitalize()} vs Time')
+                ax.plot(data['time'], data[key], color='black')  # Black line color for graphs
+                ax.set_xlabel('Time', color=GRAPH_TEXT_COLOR)
+                ax.set_ylabel(key.capitalize(), color=GRAPH_TEXT_COLOR)
+                ax.set_title(f'{key.capitalize()} vs Time', color=GRAPH_TEXT_COLOR)
             self.graph_canvases[key][0].draw()
 
 
