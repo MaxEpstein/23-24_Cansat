@@ -113,7 +113,7 @@ class CanSat:
     def create_top_banner(self):
         return [
             sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='TEAM_ID'),
-            sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(10, 1), justification='right', key='MISSION_TIME'),
+            sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='right', key='MISSION_TIME'),
             sg.Button('Calibrate', font=FONT_BUTTON),
             sg.Button('Connect', font=FONT_BUTTON),
             sg.Button('Close', font=FONT_BUTTON)
@@ -162,12 +162,12 @@ class CanSat:
 
     def create_gui_layout(self):
         layout = [
-            [sg.Column([self.create_top_banner()], pad=(5, 5))],
-            [sg.Column([self.create_second_row()], pad=(5, 5))],
-            [sg.Column([self.create_third_row()], pad=(5, 5))],
-            [sg.Column([self.create_fourth_row()], pad=(5, 5))],
-            [sg.Column([self.create_fifth_row()], pad=(5, 5))],
-            [sg.Column([self.create_sixth_row()], pad=(5, 5))],
+            [sg.Column([self.create_top_banner()], pad=(8,8))],
+            [sg.Column([self.create_second_row()], pad=(8,8))],
+            [sg.Column([self.create_third_row()], pad=(8,8))],
+            [sg.Column([self.create_fourth_row()], pad=(8,8))],
+            [sg.Column([self.create_fifth_row()], pad=(8,8))],
+            [sg.Column([self.create_sixth_row()], pad=(8,8))],
         ]
         return layout
 
