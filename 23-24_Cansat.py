@@ -56,7 +56,7 @@ class CanSat:
         self.init_graphs()
             
     def init_graphs(self):
-        fig_size = (4, 3)
+        fig_size = (5, 4)
         self.graphs = {
             'altitude': plt.subplots(figsize=(fig_size)),
             'air_speed': plt.subplots(figsize=(fig_size)),
@@ -77,21 +77,29 @@ class CanSat:
             ax.yaxis.label.set_color(GRAPH_TEXT_COLOR)
             ax.title.set_color(GRAPH_TEXT_COLOR)
             fig.patch.set_facecolor(PRIMARY_COLOR)
+            fig.subplots_adjust(left=0.15, bottom=0.15, right=0.85, top=0.85)
 
             # Create canvas as before
             canvas = FigureCanvasTkAgg(fig, master=self.window[f'graph_canvas_{key}'].TKCanvas)
             canvas_widget = canvas.get_tk_widget()
             canvas_widget.pack(fill='both', expand=True)
             self.graph_canvases[key] = (canvas, canvas_widget)
-        
+    
+    def format_key(self, key):
+        """Format the key by replacing underscores with spaces and capitalizing each word."""
+        return ' '.join(word.capitalize() for word in key.replace('_', ' ').split())
+    
+     
     def update_graphs(self, data):
         for key, (fig, ax) in self.graphs.items():
             ax.clear()
             if key in data and 'time' in data and len(data[key]) == len(data['time']):
-                ax.plot(data['time'], data[key], color='black')  # Black line color for graphs
+                formatted_key = self.format_key(key)  # Format the key for display
+                ax.plot(data['time'], data[key], color='black')
                 ax.set_xlabel('Time', color=GRAPH_TEXT_COLOR)
-                ax.set_ylabel(key.capitalize(), color=GRAPH_TEXT_COLOR)
-                ax.set_title(f'{key.capitalize()} vs Time', color=GRAPH_TEXT_COLOR)
+                ax.set_ylabel(formatted_key, color=GRAPH_TEXT_COLOR)  # Use formatted key here
+                ax.set_title(f'{formatted_key} vs Time', color=GRAPH_TEXT_COLOR)
+                plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
             self.graph_canvases[key][0].draw()
 
 
@@ -129,27 +137,27 @@ class CanSat:
     def create_fourth_row(self):
         graph_size = (250, 250)  # Adjust size as needed
         return [
-            sg.Canvas(key='graph_canvas_altitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size),
-            sg.Canvas(key='graph_canvas_air_speed', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size),
-            sg.Canvas(key='graph_canvas_temperature', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size),
-            sg.Canvas(key='graph_canvas_pressure', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size)
+            sg.Canvas(key='graph_canvas_altitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_air_speed', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_temperature', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_pressure', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8))
         ]
 
     def create_fifth_row(self):
         graph_size = (250, 250)  # Adjust size as needed
         return[
-            sg.Canvas(key='graph_canvas_voltage', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size),
-            sg.Canvas(key='graph_canvas_gps_altitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size),
-            sg.Canvas(key='graph_canvas_gps_latitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size),
-            sg.Canvas(key='graph_canvas_gps_longitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size)
+            sg.Canvas(key='graph_canvas_voltage', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_gps_altitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_gps_latitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_gps_longitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8))
         ]
 
     def create_sixth_row(self):
         graph_size = (250, 250)  # Adjust size as needed
         return[
-            sg.Canvas(key='graph_canvas_tilt_x', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size),
-            sg.Canvas(key='graph_canvas_tilt_y', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size),
-            sg.Canvas(key='graph_canvas_rot_z', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size)
+            sg.Canvas(key='graph_canvas_tilt_x', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_tilt_y', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_rot_z', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8))
         ]
 
     def create_gui_layout(self):
