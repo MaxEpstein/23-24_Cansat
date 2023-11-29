@@ -12,7 +12,17 @@ import pandas as pd
 import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
+# Define a consistent color scheme and fonts
+# Updated color constants
+# Updated color constants
+PRIMARY_COLOR = '#1B2838'  # Dark background color for the GUI
+TEXT_COLOR = 'white'  # Text color for GUI elements on the primary background
+GRAPH_BACKGROUND_COLOR = 'white'  # White background color for graphs
+GRAPH_TEXT_COLOR = 'white'  # Text color for graph labels, titles, and axes
+# Font definitions
+FONT_TITLE = ('Helvetica', 16)
+FONT_MAIN = ('Helvetica', 14)
+FONT_BUTTON = ('Helvetica', 12)
 class CanSat:
     def __init__(self, csv_file_path):
         self.data = {
@@ -40,12 +50,13 @@ class CanSat:
         }
         self.csv_file_path = csv_file_path
         self.df = pd.read_csv(self.csv_file_path)
+        self.graph_canvases = {}
         self.layout = self.create_gui_layout()
         self.window = sg.Window('CanSat Dashboard', self.layout, finalize=True)
         self.init_graphs()
             
     def init_graphs(self):
-        fig_size = (2.5, 2.5)
+        fig_size = (5, 4)
         self.graphs = {
             'altitude': plt.subplots(figsize=(fig_size)),
             'air_speed': plt.subplots(figsize=(fig_size)),
@@ -59,21 +70,36 @@ class CanSat:
             'tilt_y': plt.subplots(figsize=(fig_size)),
             'rot_z': plt.subplots(figsize=(fig_size))
         }
-        self.graph_canvases = {}
-        for i, (key, (fig, ax)) in enumerate(self.graphs.items()):
+        for key, (fig, ax) in self.graphs.items():
+            ax.set_facecolor(GRAPH_BACKGROUND_COLOR)
+            ax.tick_params(colors=GRAPH_TEXT_COLOR)
+            ax.xaxis.label.set_color(GRAPH_TEXT_COLOR)
+            ax.yaxis.label.set_color(GRAPH_TEXT_COLOR)
+            ax.title.set_color(GRAPH_TEXT_COLOR)
+            fig.patch.set_facecolor(PRIMARY_COLOR)
+            fig.subplots_adjust(left=0.15, bottom=0.15, right=0.85, top=0.85)
+
+            # Create canvas as before
             canvas = FigureCanvasTkAgg(fig, master=self.window[f'graph_canvas_{key}'].TKCanvas)
             canvas_widget = canvas.get_tk_widget()
             canvas_widget.pack(fill='both', expand=True)
             self.graph_canvases[key] = (canvas, canvas_widget)
-        
+    
+    def format_key(self, key):
+        """Format the key by replacing underscores with spaces and capitalizing each word."""
+        return ' '.join(word.capitalize() for word in key.replace('_', ' ').split())
+    
+     
     def update_graphs(self, data):
         for key, (fig, ax) in self.graphs.items():
             ax.clear()
             if key in data and 'time' in data and len(data[key]) == len(data['time']):
-                ax.plot(data['time'], data[key])
-                ax.set_xlabel('Time')
-                ax.set_ylabel(key.capitalize())
-                ax.set_title(f'{key.capitalize()} vs Time')
+                formatted_key = self.format_key(key)  # Format the key for display
+                ax.plot(data['time'], data[key], color='black')
+                ax.set_xlabel('Time', color=GRAPH_TEXT_COLOR)
+                ax.set_ylabel(formatted_key, color=GRAPH_TEXT_COLOR)  # Use formatted key here
+                ax.set_title(f'{formatted_key} vs Time', color=GRAPH_TEXT_COLOR)
+                plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
             self.graph_canvases[key][0].draw()
 
 
@@ -86,67 +112,62 @@ class CanSat:
 
     def create_top_banner(self):
         return [
-            sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=('Helvetica', 16), background_color='#1B2838', text_color='white', size=(20, 1), justification='left', key='TEAM_ID'),
-            sg.Text(self.data['MISSION_TIME'], font=('Helvetica', 16), background_color='#1B2838', text_color='white', size=(10, 1), justification='right', key='MISSION_TIME'),
-            sg.Button('Calibrate', font=('Helvetica', 12)),
-            sg.Button('Connect', font=('Helvetica', 12)),
-            sg.Button('Close', font=('Helvetica', 12))
+            sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='TEAM_ID'),
+            sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='right', key='MISSION_TIME'),
+            sg.Button('Calibrate', font=FONT_BUTTON),
+            sg.Button('Connect', font=FONT_BUTTON),
+            sg.Button('Close', font=FONT_BUTTON)
         ]
-
     def create_second_row(self):
         return [
-            sg.Text('PC DEPLOY: ' + self.data['PC_DEPLOYED'], font=('Helvetica', 14), background_color='#1B2838', text_color='white', size=(12, 1), justification='left', key='PC_DEPLOYED'),
-            sg.Text('Mode: ' + self.data['MODE'], font=('Helvetica', 14), background_color='#1B2838', text_color='white', size=(12, 1), justification='left', key='MODE'),
-            sg.Text('GPS Time: ' + self.data['GPS_TIME'], font=('Helvetica', 14), background_color='#1B2838', text_color='white', size=(16, 1), justification='left', key='GPS_TIME'),
-            sg.Text('Software State: ' + self.data['STATE'], font=('Helvetica', 14), background_color='#1B2838', text_color='white', size=(30, 1), justification='left', key='STATE')
+            sg.Text('PC DEPLOY: ' + self.data['PC_DEPLOYED'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(12, 1), justification='left', key='PC_DEPLOYED'),
+            sg.Text('Mode: ' + self.data['MODE'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(12, 1), justification='left', key='MODE'),
+            sg.Text('GPS Time: ' + self.data['GPS_TIME'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(16, 1), justification='left', key='GPS_TIME'),
+            sg.Text('Software State: ' + self.data['STATE'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(30, 1), justification='left', key='STATE')
         ]
 
     def create_third_row(self):
         return [
-            sg.Text('Packet Count: ' + str(self.data['PACKET_COUNT']), font=('Helvetica', 14), background_color='#1B2838', text_color='white', size=(15, 1), justification='left', key='PC1'),
-            sg.Text('HS Deploy: ' + self.data['HS_DEPLOYED'], font=('Helvetica', 14), background_color='#1B2838', text_color='white', size=(15, 1), justification='left', key='HS_DEPLOYED'),
-            sg.Text('GPS Sat: ' + str(self.data['GPS_SATS']), font=('Helvetica', 14), background_color='#1B2838', text_color='white', size=(12, 1), justification='left', key='GPS_SATS'),
-            sg.Text('CMD Echo: ' + self.data['CMD_ECHO'], font=('Helvetica', 14), background_color='#1B2838', text_color='white', size=(25, 1), justification='left', key='CMD_ECHO')
+            sg.Text('Packet Count: ' + str(self.data['PACKET_COUNT']), font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(15, 1), justification='left', key='PC1'),
+            sg.Text('HS Deploy: ' + self.data['HS_DEPLOYED'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(15, 1), justification='left', key='HS_DEPLOYED'),
+            sg.Text('GPS Sat: ' + str(self.data['GPS_SATS']), font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(12, 1), justification='left', key='GPS_SATS'),
+            sg.Text('CMD Echo: ' + self.data['CMD_ECHO'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(25, 1), justification='left', key='CMD_ECHO')
         ]
 
     def create_fourth_row(self):
+        graph_size = (250, 250)  # Adjust size as needed
         return [
-            sg.Canvas(key='graph_canvas_altitude', background_color="black", size=(250, 250)), # Altitude (m) vs Time (s)
-            sg.Canvas(key='graph_canvas_air_speed', background_color="black", size=(250, 250)), # Air Speed (m/s) vs Time (s)
-            sg.Canvas(key='graph_canvas_temperature', background_color="black", size=(250, 250)), # Temperature (C) vs Time (s)
-            sg.Canvas(key='graph_canvas_pressure', background_color="black", size=(250, 250))  # Pressure (Pa) vs Time (s)
+            sg.Canvas(key='graph_canvas_altitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_air_speed', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_temperature', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_pressure', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8))
         ]
 
     def create_fifth_row(self):
+        graph_size = (250, 250)  # Adjust size as needed
         return[
-            sg.Canvas(key='graph_canvas_voltage', background_color="black", size=(250, 250)), # Voltage (V) vs Time (s)
-            sg.Canvas(key='graph_canvas_gps_altitude', background_color="black", size=(250, 250)), # GPS Altitude (m) vs Time (s)
-            sg.Canvas(key='graph_canvas_gps_latitude', background_color="black", size=(250, 250)),  # GPS Latitude (deg) vs Time (s)
-            sg.Canvas(key='graph_canvas_gps_longitude', background_color="black", size=(250, 250)), # GPS Longitude (deg) vs Time (s)
+            sg.Canvas(key='graph_canvas_voltage', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_gps_altitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_gps_latitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_gps_longitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8))
         ]
 
     def create_sixth_row(self):
+        graph_size = (250, 250)  # Adjust size as needed
         return[
-            sg.Canvas(key='graph_canvas_tilt_x', background_color="black", size=(250, 250)), # Tilt X (deg) vs Time (s)
-            sg.Canvas(key='graph_canvas_tilt_y', background_color="black", size=(250, 250)),  # Tilt Y (deg) vs Time (s)
-            sg.Canvas(key='graph_canvas_rot_z', background_color="black", size=(250, 250)) # Rot Z (deg) vs Time (s)
+            sg.Canvas(key='graph_canvas_tilt_x', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_tilt_y', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8)),
+            sg.Canvas(key='graph_canvas_rot_z', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(8,8))
         ]
 
     def create_gui_layout(self):
-        top_banner = self.create_top_banner()
-        second_row = self.create_second_row()
-        third_row = self.create_third_row()
-        fourth_row = self.create_fourth_row()
-        fifth_row = self.create_fifth_row()
-        sixth_row = self.create_sixth_row()
         layout = [
-            top_banner,
-            second_row,
-            third_row,
-            fourth_row,
-            fifth_row, 
-            sixth_row,
-
+            [sg.Column([self.create_top_banner()], pad=(8,8))],
+            [sg.Column([self.create_second_row()], pad=(8,8))],
+            [sg.Column([self.create_third_row()], pad=(8,8))],
+            [sg.Column([self.create_fourth_row()], pad=(8,8))],
+            [sg.Column([self.create_fifth_row()], pad=(8,8))],
+            [sg.Column([self.create_sixth_row()], pad=(8,8))],
         ]
         return layout
 
