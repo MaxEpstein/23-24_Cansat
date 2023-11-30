@@ -77,7 +77,7 @@ class CanSat:
             ax.yaxis.label.set_color(GRAPH_TEXT_COLOR)
             ax.title.set_color(GRAPH_TEXT_COLOR)
             fig.patch.set_facecolor(PRIMARY_COLOR)
-            fig.subplots_adjust(left=0.15, bottom=0.15, right=0.85, top=0.85)
+            fig.subplots_adjust(left=0.15, bottom=0.25, right=0.85, top=0.90)
 
             # Create canvas as before
             canvas = FigureCanvasTkAgg(fig, master=self.window[f'graph_canvas_{key}'].TKCanvas)
@@ -87,7 +87,7 @@ class CanSat:
     
     def format_key(self, key):
         """Format the key by replacing underscores with spaces and capitalizing each word."""
-        return ' '.join(word.capitalize() for word in key.replace('_', ' ').split())
+        return key.replace('_', ' ').upper()
     
      
     def update_graphs(self, data):
@@ -96,11 +96,15 @@ class CanSat:
             if key in data and 'time' in data and len(data[key]) == len(data['time']):
                 formatted_key = self.format_key(key)  # Format the key for display
                 ax.plot(data['time'], data[key], color='black')
-                ax.set_xlabel('Time', color=GRAPH_TEXT_COLOR)
+                ax.set_xlabel('TIME', color=GRAPH_TEXT_COLOR)
                 ax.set_ylabel(formatted_key, color=GRAPH_TEXT_COLOR)  # Use formatted key here
-                ax.set_title(f'{formatted_key} vs Time', color=GRAPH_TEXT_COLOR)
+                
+                # Set the title with bold font
+                ax.set_title(f'{formatted_key} VS TIME', color=GRAPH_TEXT_COLOR, fontweight='bold')
+                
                 plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
             self.graph_canvases[key][0].draw()
+
 
 
 
@@ -113,7 +117,7 @@ class CanSat:
     def create_top_banner(self):
         return [
             sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='TEAM_ID'),
-            sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='right', key='MISSION_TIME'),
+            sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(22, 1), justification='right', key='MISSION_TIME'),
             sg.Button('Calibrate', font=FONT_BUTTON),
             sg.Button('Connect', font=FONT_BUTTON),
             sg.Button('Close', font=FONT_BUTTON)
