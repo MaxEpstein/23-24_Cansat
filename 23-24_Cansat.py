@@ -12,6 +12,7 @@ import pandas as pd
 import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 # Define a consistent color scheme and fonts
 # Updated color constants
 # Updated color constants
@@ -19,10 +20,12 @@ PRIMARY_COLOR = '#1B2838'  # Dark background color for the GUI
 TEXT_COLOR = 'white'  # Text color for GUI elements on the primary background
 GRAPH_BACKGROUND_COLOR = 'white'  # White background color for graphs
 GRAPH_TEXT_COLOR = 'white'  # Text color for graph labels, titles, and axes
+
 # Font definitions
-FONT_TITLE = ('Helvetica', 16)
-FONT_MAIN = ('Helvetica', 14)
-FONT_BUTTON = ('Helvetica', 12)
+FONT_TITLE = ('Helvetica', 18)
+FONT_MAIN = ('Helvetica', 16)
+FONT_BUTTON = ('Helvetica', 18)
+
 class CanSat:
     def __init__(self, csv_file_path):
         self.data = {
@@ -105,9 +108,6 @@ class CanSat:
                 plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
             self.graph_canvases[key][0].draw()
 
-
-
-
     def display_all_graphs(self):
         for key, (fig, ax) in self.graphs.items():
             canvas, canvas_widget = self.graph_canvases[key]
@@ -116,26 +116,26 @@ class CanSat:
 
     def create_top_banner(self):
         return [
-            sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='TEAM_ID'),
-            sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(22, 1), justification='right', key='MISSION_TIME'),
-            sg.Button('Calibrate', font=FONT_BUTTON),
-            sg.Button('Connect', font=FONT_BUTTON),
-            sg.Button('Close', font=FONT_BUTTON)
+            sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(22, 2), justification='center', key='TEAM_ID'),
+            sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(24, 2), justification='center', key='MISSION_TIME'),
+            sg.Button('Calibrate', font=FONT_BUTTON, size=(18, 2)),
+            sg.Button('Connect', font=FONT_BUTTON, size=(18, 2)),
+            sg.Button('Close', font=FONT_BUTTON, size=(18, 2))
         ]
     def create_second_row(self):
         return [
-            sg.Text('PC DEPLOY: ' + self.data['PC_DEPLOYED'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(12, 1), justification='left', key='PC_DEPLOYED'),
-            sg.Text('Mode: ' + self.data['MODE'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(12, 1), justification='left', key='MODE'),
-            sg.Text('GPS Time: ' + self.data['GPS_TIME'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(16, 1), justification='left', key='GPS_TIME'),
-            sg.Text('Software State: ' + self.data['STATE'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(30, 1), justification='left', key='STATE')
+            sg.Text('PC DEPLOY: ' + self.data['PC_DEPLOYED'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(14, 2), justification='center', key='PC_DEPLOYED'),
+            sg.Text('Mode: ' + self.data['MODE'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(14, 2), justification='center', key='MODE'),
+            sg.Text('GPS Time: ' + self.data['GPS_TIME'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(22, 2), justification='center', key='GPS_TIME'),
+            sg.Text('Software State: ' + self.data['STATE'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(22, 2), justification='center', key='STATE')
         ]
 
     def create_third_row(self):
         return [
-            sg.Text('Packet Count: ' + str(self.data['PACKET_COUNT']), font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(15, 1), justification='left', key='PC1'),
-            sg.Text('HS Deploy: ' + self.data['HS_DEPLOYED'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(15, 1), justification='left', key='HS_DEPLOYED'),
-            sg.Text('GPS Sat: ' + str(self.data['GPS_SATS']), font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(12, 1), justification='left', key='GPS_SATS'),
-            sg.Text('CMD Echo: ' + self.data['CMD_ECHO'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(25, 1), justification='left', key='CMD_ECHO')
+            sg.Text('Packet Count: ' + str(self.data['PACKET_COUNT']), font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(17, 2), justification='centere', key='PC1'),
+            sg.Text('HS Deploy: ' + self.data['HS_DEPLOYED'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(17, 2), justification='center', key='HS_DEPLOYED'),
+            sg.Text('GPS Sat: ' + str(self.data['GPS_SATS']), font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(14, 2), justification='center', key='GPS_SATS'),
+            sg.Text('CMD Echo: ' + self.data['CMD_ECHO'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(22, 2), justification='center', key='CMD_ECHO')
         ]
 
     def create_fourth_row(self):
