@@ -13,6 +13,11 @@ import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
+<<<<<<< HEAD
+=======
+import time
+
+>>>>>>> 046771f58bdc42c01511436cffc4a7501511e2f5
 # Define a consistent color scheme and fonts
 # Updated color constants
 # Updated color constants
@@ -22,9 +27,15 @@ GRAPH_BACKGROUND_COLOR = 'white'  # White background color for graphs
 GRAPH_TEXT_COLOR = 'white'  # Text color for graph labels, titles, and axes
 
 # Font definitions
+<<<<<<< HEAD
 FONT_TITLE = ('Helvetica', 18)
 FONT_MAIN = ('Helvetica', 16)
 FONT_BUTTON = ('Helvetica', 18)
+=======
+FONT_TITLE = ('Helvetica', 16)
+FONT_MAIN = ('Helvetica', 14)
+FONT_BUTTON = ('Helvetica', 12)
+>>>>>>> 046771f58bdc42c01511436cffc4a7501511e2f5
 
 class CanSat:
     def __init__(self, csv_file_path):
@@ -180,17 +191,22 @@ class CanSat:
 
     def run_gui(self):
         while True:
-            event, values = self.window.read(timeout=1000)
+            event, values = self.window.read(timeout=1500)
             if event == sg.WIN_CLOSED or event == 'Close':
                 break
 
             # Read and update graphs with new data
+            start_time = time.perf_counter()
             new_data = self.read_latest_csv_data()
             self.update_graphs(new_data)
             self.display_all_graphs()
-
+            
             # Update GUI elements
             self.update_gui_elements()
+            end_time = time.perf_counter()
+            duration = round(end_time-start_time, 5)
+            print(f'Refresh rate: {duration} seconds')
+
 
         self.window.close()
 
@@ -302,7 +318,7 @@ class CanSat:
 
 
 def main():
-    csv_file_path = "Sample_Flight.csv"
+    csv_file_path = "SimCSV.csv"
     cansat = CanSat(csv_file_path)
     cansat.run_gui()
 
