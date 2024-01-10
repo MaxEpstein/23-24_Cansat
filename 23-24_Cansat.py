@@ -180,6 +180,10 @@ class CanSat:
     def set_data(self, data_dict):
         self.data.update(data_dict)
 
+    # Placeholder for simulation mode, will eventually run commands through this
+    def run_simulation(self):
+        pass
+    
     def run_gui(self):
         while True:
             event, values = self.window.read(timeout=1000)
