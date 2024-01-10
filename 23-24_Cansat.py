@@ -67,6 +67,7 @@ class CanSat:
         self.graph_canvases = {}
         self.layout = self.create_gui_layout()
         self.window = sg.Window('CanSat Dashboard', self.layout, finalize=True)
+        self.sim_mode = False  # Simulation mode flag
         self.init_graphs()
             
     def init_graphs(self):
@@ -127,11 +128,20 @@ class CanSat:
 
     def create_top_banner(self):
         return [
+<<<<<<< HEAD
             sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(22, 2), justification='center', key='TEAM_ID'),
             sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(24, 2), justification='center', key='MISSION_TIME'),
             sg.Button('Calibrate', font=FONT_BUTTON, size=(18, 2)),
             sg.Button('Connect', font=FONT_BUTTON, size=(18, 2)),
             sg.Button('Close', font=FONT_BUTTON, size=(18, 2))
+=======
+            sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='TEAM_ID'),
+            sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(22, 1), justification='right', key='MISSION_TIME'),
+            sg.Button('Calibrate', font=FONT_BUTTON),
+            sg.Button('Connect', font=FONT_BUTTON),
+            sg.Button('Close', font=FONT_BUTTON),
+            sg.Button('Simulation Mode', font=FONT_BUTTON, key='Sim_Mode')  # Simulation mode button
+>>>>>>> 131459ab165dfe112771805a9e6bc625fce9bd56
         ]
     def create_second_row(self):
         return [
@@ -195,6 +205,10 @@ class CanSat:
             if event == sg.WIN_CLOSED or event == 'Close':
                 break
 
+            if event == 'Simulation_Mode':
+                self.simulation_mode = not self.simulation_mode
+                print(f"Simulation Mode {'Enabled' if self.simulation_mode else 'Disabled'}")
+                
             # Read and update graphs with new data
             start_time = time.perf_counter()
             new_data = self.read_latest_csv_data()
@@ -215,28 +229,30 @@ class CanSat:
 
     # Placeholder for data update simulation
     def read_latest_csv_data(self):
-        self.df = pd.read_csv(self.csv_file_path)
+        if self.sim_mode:
+            pass
+        else:
+            self.df = pd.read_csv(self.csv_file_path)
 
-        # Read the last 10 rows
-        last_rows = self.df.tail(10)
+            # Read the last 10 rows
+            last_rows = self.df.tail(10)
 
-        graph_data = {
-            'time': last_rows['MISSION_TIME'].tolist(),
-            'altitude': last_rows['ALTITUDE'].tolist(),
-            'air_speed': last_rows['AIR_SPEED'].tolist(),
-            'temperature': last_rows['TEMPERATURE'].tolist(),
-            'pressure': last_rows['PRESSURE'].tolist(),
-            'voltage': last_rows['VOLTAGE'].tolist(),
-            'gps_altitude': last_rows['GPS_ALTITUDE'].tolist(),
-            'gps_latitude': last_rows['GPS_LATITUDE'].tolist(),
-            'gps_longitude': last_rows['GPS_LONGITUDE'].tolist(),
-            'tilt_x': last_rows['TILT_X'].tolist(),
-            'tilt_y': last_rows['TILT_Y'].tolist(),
-            'rot_z': last_rows['ROT_Z'].tolist()
-            # Add any additional fields you need
-        }
-
-        return graph_data
+            graph_data = {
+                'time': last_rows['MISSION_TIME'].tolist(),
+                'altitude': last_rows['ALTITUDE'].tolist(),
+                'air_speed': last_rows['AIR_SPEED'].tolist(),
+                'temperature': last_rows['TEMPERATURE'].tolist(),
+                'pressure': last_rows['PRESSURE'].tolist(),
+                'voltage': last_rows['VOLTAGE'].tolist(),
+                'gps_altitude': last_rows['GPS_ALTITUDE'].tolist(),
+                'gps_latitude': last_rows['GPS_LATITUDE'].tolist(),
+                'gps_longitude': last_rows['GPS_LONGITUDE'].tolist(),
+                'tilt_x': last_rows['TILT_X'].tolist(),
+                'tilt_y': last_rows['TILT_Y'].tolist(),
+                'rot_z': last_rows['ROT_Z'].tolist()
+                # Add any additional fields you need
+            }
+            return graph_data
 
 
         '''
