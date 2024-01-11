@@ -321,7 +321,7 @@ class CanSat:
 
 
 def main():
-    csv_file_path = "Flight_1032.csv"
+    csv_file_path = "SimCSV.csv"
     cansat = CanSat(csv_file_path)
     cansat.run_gui()
 
