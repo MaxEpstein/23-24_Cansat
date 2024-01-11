@@ -12,9 +12,7 @@ import pandas as pd
 import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
 import time
-
 # Define a consistent color scheme and fonts
 # Updated color constants
 # Updated color constants
@@ -27,7 +25,6 @@ GRAPH_TEXT_COLOR = 'white'  # Text color for graph labels, titles, and axes
 FONT_TITLE = ('Helvetica', 16)
 FONT_MAIN = ('Helvetica', 14)
 FONT_BUTTON = ('Helvetica', 12)
-
 class CanSat:
     def __init__(self, csv_file_path):
         self.data = {
