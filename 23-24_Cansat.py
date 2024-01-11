@@ -12,6 +12,7 @@ import pandas as pd
 import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import time
 # Define a consistent color scheme and fonts
 # Updated color constants
 # Updated color constants
@@ -186,7 +187,7 @@ class CanSat:
     
     def run_gui(self):
         while True:
-            event, values = self.window.read(timeout=1000)
+            event, values = self.window.read(timeout=1500)
             if event == sg.WIN_CLOSED or event == 'Close':
                 break
 
@@ -195,12 +196,17 @@ class CanSat:
                 print(f"Simulation Mode {'Enabled' if self.simulation_mode else 'Disabled'}")
                 
             # Read and update graphs with new data
+            start_time = time.perf_counter()
             new_data = self.read_latest_csv_data()
             self.update_graphs(new_data)
             self.display_all_graphs()
-
+            
             # Update GUI elements
             self.update_gui_elements()
+            end_time = time.perf_counter()
+            duration = round(end_time-start_time, 5)
+            print(f'Refresh rate: {duration} seconds')
+
 
         self.window.close()
 
@@ -314,7 +320,7 @@ class CanSat:
 
 
 def main():
-    csv_file_path = "Sample_Flight.csv"
+    csv_file_path = "SimCSV.csv"
     cansat = CanSat(csv_file_path)
     cansat.run_gui()
 
