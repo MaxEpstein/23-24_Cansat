@@ -54,11 +54,13 @@ class CanSat:
         self.graph_canvases = {}
         self.layout = self.create_gui_layout()
         self.window = sg.Window('CanSat Dashboard', self.layout, finalize=True)
+        self.window.move(0, 0)
+
         self.sim_mode = False  # Simulation mode flag
         self.init_graphs()
             
     def init_graphs(self):
-        fig_size = (5, 4)
+        fig_size = (3.8, 3.5)
         self.graphs = {
             'altitude': plt.subplots(figsize=(fig_size)),
             'air_speed': plt.subplots(figsize=(fig_size)),
@@ -122,7 +124,7 @@ class CanSat:
             sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(22, 1), justification='right', key='MISSION_TIME'),
             sg.Button('Calibrate', font=FONT_BUTTON),
             sg.Button('Connect', font=FONT_BUTTON),
-            sg.Button('Close', font=FONT_BUTTON),
+            sg.Button(font=FONT_BUTTON, image_filename="close_button_edited.png"),
             sg.Button('Simulation Mode', font=FONT_BUTTON, key='Sim_Mode')  # Simulation mode button
         ]
     def create_second_row(self):
@@ -181,14 +183,10 @@ class CanSat:
     def set_data(self, data_dict):
         self.data.update(data_dict)
 
-    # Placeholder for simulation mode, will eventually run commands through this
-    def run_simulation(self):
-        pass
-    
     def run_gui(self):
         while True:
             event, values = self.window.read(timeout=1500)
-            if event == sg.WIN_CLOSED or event == 'Close':
+            if event == sg.WIN_CLOSED or event == '':
                 break
 
             if event == 'Simulation_Mode':
@@ -226,7 +224,7 @@ class CanSat:
             graph_data = {
                 'time': last_rows['MISSION_TIME'].tolist(),
                 'altitude': last_rows['ALTITUDE'].tolist(),
-                'air_speed': last_rows['AIR_SPEED'].tolist(),
+                'air_speed': last_rows['AIR_SPEED'].tolist(),       # does not exist in Flight_1032.csv hence the error
                 'temperature': last_rows['TEMPERATURE'].tolist(),
                 'pressure': last_rows['PRESSURE'].tolist(),
                 'voltage': last_rows['VOLTAGE'].tolist(),
