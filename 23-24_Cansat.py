@@ -13,11 +13,8 @@ import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-<<<<<<< HEAD
-=======
 import time
 
->>>>>>> 046771f58bdc42c01511436cffc4a7501511e2f5
 # Define a consistent color scheme and fonts
 # Updated color constants
 # Updated color constants
@@ -27,15 +24,9 @@ GRAPH_BACKGROUND_COLOR = 'white'  # White background color for graphs
 GRAPH_TEXT_COLOR = 'white'  # Text color for graph labels, titles, and axes
 
 # Font definitions
-<<<<<<< HEAD
-FONT_TITLE = ('Helvetica', 18)
-FONT_MAIN = ('Helvetica', 16)
-FONT_BUTTON = ('Helvetica', 18)
-=======
 FONT_TITLE = ('Helvetica', 16)
 FONT_MAIN = ('Helvetica', 14)
 FONT_BUTTON = ('Helvetica', 12)
->>>>>>> 046771f58bdc42c01511436cffc4a7501511e2f5
 
 class CanSat:
     def __init__(self, csv_file_path):
@@ -128,20 +119,12 @@ class CanSat:
 
     def create_top_banner(self):
         return [
-<<<<<<< HEAD
-            sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(22, 2), justification='center', key='TEAM_ID'),
-            sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(24, 2), justification='center', key='MISSION_TIME'),
-            sg.Button('Calibrate', font=FONT_BUTTON, size=(18, 2)),
-            sg.Button('Connect', font=FONT_BUTTON, size=(18, 2)),
-            sg.Button('Close', font=FONT_BUTTON, size=(18, 2))
-=======
             sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='TEAM_ID'),
             sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(22, 1), justification='right', key='MISSION_TIME'),
             sg.Button('Calibrate', font=FONT_BUTTON),
             sg.Button('Connect', font=FONT_BUTTON),
             sg.Button('Close', font=FONT_BUTTON),
             sg.Button('Simulation Mode', font=FONT_BUTTON, key='Sim_Mode')  # Simulation mode button
->>>>>>> 131459ab165dfe112771805a9e6bc625fce9bd56
         ]
     def create_second_row(self):
         return [
@@ -338,7 +321,7 @@ class CanSat:
 
 
 def main():
-    csv_file_path = "SimCSV.csv"
+    csv_file_path = "Flight_1032.csv"
     cansat = CanSat(csv_file_path)
     cansat.run_gui()
 
