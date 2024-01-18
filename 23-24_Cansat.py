@@ -4,9 +4,9 @@
 
 # Members: 
 # Danush Singla
+# Sarah Tran 
 # Matthew Lee 
 # Alex Segelnick
-# Sarah Tran 
 # Dylan Manauasa
 import pandas as pd
 import PySimpleGUI as sg
@@ -16,7 +16,7 @@ import time
 
 # Define a consistent color scheme and fonts
 # Updated color constants
-PRIMARY_COLOR = '#1B2838'  # Dark background color for the GUI
+PRIMARY_COLOR = '#09103d'  # Dark background color for the GUI
 TEXT_COLOR = 'white'  # Text color for GUI elements on the primary background
 GRAPH_BACKGROUND_COLOR = 'white'  # White background color for graphs
 GRAPH_TEXT_COLOR = 'white'  # Text color for graph labels, titles, and axes
@@ -25,6 +25,7 @@ GRAPH_TEXT_COLOR = 'white'  # Text color for graph labels, titles, and axes
 FONT_TITLE = ('Helvetica', 16)
 FONT_MAIN = ('Helvetica', 14)
 FONT_BUTTON = ('Helvetica', 12)
+
 class CanSat:
     def __init__(self, csv_file_path):
         self.data = {
@@ -54,7 +55,7 @@ class CanSat:
         self.df = pd.read_csv(self.csv_file_path)
         self.graph_canvases = {}
         self.layout = self.create_gui_layout()
-        self.window = sg.Window('CanSat Dashboard', self.layout, finalize=True)
+        self.window = sg.Window('CanSat Dashboard', self.layout, background_color='#09103d', finalize=True)
         self.window.move(0, 0)
 
         self.simulation_mode = False  # Simulation mode flag
@@ -120,59 +121,59 @@ class CanSat:
         return [
             sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(15, 1), justification='centere', key='TEAM_ID'),
             sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='centere', key='MISSION_TIME'),
-            sg.Button('Calibrate', font=FONT_BUTTON),
-            sg.Button('Connect', font=FONT_BUTTON),
+            sg.Button('Connect', font=FONT_BUTTON, key='Connect'),
             sg.Button('Simulation Mode', font=FONT_BUTTON, key='Sim_Mode'),
-            sg.Push(), sg.Button(font=FONT_BUTTON, button_color="#68748c", border_width=0, image_filename="close_button_edited.png"), sg.Push()   # Simulation mode button
+            sg.Button(font=FONT_BUTTON, button_color="#68748c", border_width=0, image_filename="close_button_edited.png")   # Simulation mode button
         ]
+    
     def create_second_row(self):
         return [
-            sg.Text('PC DEPLOY: ' + self.data['PC_DEPLOYED'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(14, 1), justification='center', key='PC_DEPLOYED'),
-            sg.Text('Mode: ' + self.data['MODE'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(14, 1), justification='center', key='MODE'),
-            sg.Text('GPS Time: ' + self.data['GPS_TIME'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='center', key='GPS_TIME'),
-            sg.Text('Software State: ' + self.data['STATE'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='center', key='STATE')
+            sg.Text('PC DEPLOY: ' + self.data['PC_DEPLOYED'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='PC_DEPLOYED', pad=(0, 0)),
+            sg.Text('Mode: ' + self.data['MODE'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='MODE', pad=(0, 0)),
+            sg.Text('GPS Time: ' + self.data['GPS_TIME'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(25, 1), justification='left', key='GPS_TIME', pad=(0, 0)),
+            sg.Text('Software State: ' + self.data['STATE'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='STATE', pad=(0, 0))
         ]
 
     def create_third_row(self):
         return [
-            sg.Text('Packet Count: ' + str(self.data['PACKET_COUNT']), font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(17, 1), justification='centere', key='PC1'),
-            sg.Text('HS Deploy: ' + self.data['HS_DEPLOYED'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(17, 1), justification='center', key='HS_DEPLOYED'),
-            sg.Text('GPS Sat: ' + str(self.data['GPS_SATS']), font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(14, 1), justification='center', key='GPS_SATS'),
-            sg.Text('CMD Echo: ' + self.data['CMD_ECHO'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='center', key='CMD_ECHO')
+            sg.Text('Packet Count: ' + str(self.data['PACKET_COUNT']), font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='PC1', pad=(0, 0)),
+            sg.Text('HS Deploy: ' + self.data['HS_DEPLOYED'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='HS_DEPLOYED', pad=(0,0)),
+            sg.Text('GPS Sat: ' + str(self.data['GPS_SATS']), font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(25, 1), justification='left', key='GPS_SATS', pad=(0,0)),
+            sg.Text('CMD Echo: ' + self.data['CMD_ECHO'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='CMD_ECHO', pad=(0,0))
         ]
 
     def create_fourth_row(self):
         graph_size = (250, 250)  # Adjust size as needed
         return [
-            sg.Canvas(key='graph_canvas_altitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(4,4)),
-            sg.Canvas(key='graph_canvas_air_speed', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(4,4)),
-            sg.Canvas(key='graph_canvas_temperature', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(4,4)),
-            sg.Canvas(key='graph_canvas_pressure', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(4,4))
+            sg.Canvas(key='graph_canvas_altitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0)),
+            sg.Canvas(key='graph_canvas_air_speed', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0)),
+            sg.Canvas(key='graph_canvas_temperature', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0)),
+            sg.Canvas(key='graph_canvas_pressure', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0))
         ]
 
     def create_fifth_row(self):
         graph_size = (250, 250)  # Adjust size as needed
         return[
-            sg.Canvas(key='graph_canvas_voltage', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(4,4)),
-            sg.Canvas(key='graph_canvas_gps_altitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(4,4)),
-            sg.Canvas(key='graph_canvas_gps_latitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(4,4)),
-            sg.Canvas(key='graph_canvas_gps_longitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(4,4))
+            sg.Canvas(key='graph_canvas_voltage', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0)),
+            sg.Canvas(key='graph_canvas_gps_altitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0)),
+            sg.Canvas(key='graph_canvas_gps_latitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0)),
+            sg.Canvas(key='graph_canvas_gps_longitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0))
         ]
 
     def create_sixth_row(self):
         graph_size = (250, 250)  # Adjust size as needed
         return[
-            sg.Canvas(key='graph_canvas_tilt_x', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(4,4)),
-            sg.Canvas(key='graph_canvas_tilt_y', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(4,4)),
-            sg.Canvas(key='graph_canvas_rot_z', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(4,4))
+            sg.Canvas(key='graph_canvas_tilt_x', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0)),
+            sg.Canvas(key='graph_canvas_tilt_y', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0)),
+            sg.Canvas(key='graph_canvas_rot_z', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0))
         ]
 
     def create_seventh_row(self):
         dropdown_options = ["bleh", "blah", "bloh"]
         return[
-            sg.Text('CMD', font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, size=(5, 1), text_color=TEXT_COLOR, justification='centere'),
-            sg.DD(dropdown_options, font=(FONT_MAIN, 20), size=(20, 15)),
-            sg.Button('Send', font=FONT_BUTTON, size=(5, 1)),
+            sg.Text('CMD', font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, size=(5, 1), text_color=TEXT_COLOR, justification='centere', pad=(0,0)),
+            sg.DD(dropdown_options, font=(FONT_MAIN, 20), size=(20, 15), pad=(0,0)),
+            sg.Button('Send', font=FONT_BUTTON, size=(5, 1), pad=(0,0))
         ]
 
     def create_gui_layout(self):
@@ -200,7 +201,13 @@ class CanSat:
             if event == 'Simulation_Mode': # Change this to Sim_Mode to get this branch to work
                 self.simulation_mode = not self.simulation_mode
                 print(f"Simulation Mode {'Enabled' if self.simulation_mode else 'Disabled'}")
-                
+
+            if event == 'Calibrate': 
+                print("Calibrate Button Pressed")
+
+            if event == 'Connect':
+                print("Connect Button Pressed")
+
             # Read and update graphs with new data
             start_time = time.perf_counter()
             new_data = self.read_latest_csv_data()
