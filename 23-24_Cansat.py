@@ -22,7 +22,7 @@ GRAPH_BACKGROUND_COLOR = 'white'  # White background color for graphs
 GRAPH_TEXT_COLOR = 'white'  # Text color for graph labels, titles, and axes
 
 # Font definitions
-FONT_TITLE = ('Helvetica', 16)
+FONT_TITLE = ('Helvetica', 17)
 FONT_MAIN = ('Helvetica', 14)
 FONT_BUTTON = ('Helvetica', 12)
 
@@ -119,11 +119,12 @@ class CanSat:
 
     def create_top_banner(self):
         return [
-            sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(15, 1), justification='centere', key='TEAM_ID'),
-            sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='centere', key='MISSION_TIME'),
-            sg.Button('Connect', font=FONT_BUTTON, key='Connect'),
-            sg.Button('Simulation Mode', font=FONT_BUTTON, key='Sim_Mode'),
-            sg.Button(font=FONT_BUTTON, button_color="#68748c", border_width=0, image_filename="close_button_edited.png")   # Simulation mode button
+            sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(15, 1), justification='centere', key='TEAM_ID', pad=(0, 0)),
+            sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='centere', key='MISSION_TIME', pad=(0, 0)),
+            sg.Button('Calibrate', font=FONT_BUTTON, image_filename="button_calibrate_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(0, 0)),
+            sg.Button('Connect', font=FONT_BUTTON, image_filename="button_connect_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(0, 0)),
+            sg.Button('Simulation Mode', font=FONT_BUTTON, key='Sim_Mode', image_filename="button_simulate_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(0, 0)),
+            sg.Button(font=FONT_BUTTON, button_color=PRIMARY_COLOR, border_width=0, image_filename="close_button_edited.png", pad=(0, 0))
         ]
     
     def create_second_row(self):
