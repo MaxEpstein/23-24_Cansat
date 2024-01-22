@@ -26,6 +26,8 @@ FONT_TITLE = ('Helvetica', 17)
 FONT_MAIN = ('Helvetica', 14)
 FONT_BUTTON = ('Helvetica', 12)
 
+sg.theme_background_color(PRIMARY_COLOR)
+
 class CanSat:
     def __init__(self, csv_file_path):
         self.data = {
@@ -55,7 +57,7 @@ class CanSat:
         self.df = pd.read_csv(self.csv_file_path)
         self.graph_canvases = {}
         self.layout = self.create_gui_layout()
-        self.window = sg.Window('CanSat Dashboard', self.layout, background_color='#09103d', finalize=True)
+        self.window = sg.Window('CanSat Dashboard', self.layout, background_color=PRIMARY_COLOR, finalize=True)
         self.window.move(0, 0)
 
         self.simulation_mode = False  # Simulation mode flag
@@ -95,7 +97,6 @@ class CanSat:
         """Format the key by replacing underscores with spaces and capitalizing each word."""
         return key.replace('_', ' ').upper()
     
-     
     def update_graphs(self, data):
         for key, (fig, ax) in self.graphs.items():
             ax.clear()
@@ -118,13 +119,17 @@ class CanSat:
 
 
     def create_top_banner(self):
+        dropdown_options = ["bleh", "blah", "bloh"]
         return [
-            sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(15, 1), justification='centere', key='TEAM_ID', pad=(0, 0)),
-            sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='centere', key='MISSION_TIME', pad=(0, 0)),
-            sg.Button('Calibrate', font=FONT_BUTTON, image_filename="button_calibrate_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(0, 0)),
-            sg.Button('Connect', font=FONT_BUTTON, image_filename="button_connect_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(0, 0)),
-            sg.Button('Simulation Mode', font=FONT_BUTTON, key='Sim_Mode', image_filename="button_simulate_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(0, 0)),
-            sg.Button(font=FONT_BUTTON, button_color=PRIMARY_COLOR, border_width=0, image_filename="close_button_edited.png", pad=(0, 0))
+            sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(15, 1), justification='left', key='TEAM_ID', pad=(0, 0)),
+            sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='MISSION_TIME', pad=(0, 0)),
+            sg.Button('Calibrate', font=FONT_BUTTON, image_filename="button_calibrate_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
+            sg.Button('Connect', font=FONT_BUTTON, image_filename="button_connect_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
+            sg.Button('Simulation Mode', font=FONT_BUTTON, key='Sim_Mode', image_filename="button_simulate_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
+            sg.Button(font=FONT_BUTTON, button_color=PRIMARY_COLOR, border_width=0, image_filename="close_button_edited.png", pad=(5, 0), expand_x=False),
+            sg.Text('CMD', font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, size=(5, 1), text_color=TEXT_COLOR, justification='right', pad=(0,0)),
+            sg.DD(dropdown_options, font=(FONT_MAIN, 20), size=(20, 15), pad=(0,0)),
+            sg.Button('Send', font=FONT_BUTTON, size=(5, 1), pad=(0,0))
         ]
     
     def create_second_row(self):
@@ -169,23 +174,23 @@ class CanSat:
             sg.Canvas(key='graph_canvas_rot_z', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0))
         ]
 
-    def create_seventh_row(self):
-        dropdown_options = ["bleh", "blah", "bloh"]
-        return[
-            sg.Text('CMD', font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, size=(5, 1), text_color=TEXT_COLOR, justification='centere', pad=(0,0)),
-            sg.DD(dropdown_options, font=(FONT_MAIN, 20), size=(20, 15), pad=(0,0)),
-            sg.Button('Send', font=FONT_BUTTON, size=(5, 1), pad=(0,0))
-        ]
+    # def create_seventh_row(self):
+    #     dropdown_options = ["bleh", "blah", "bloh"]
+    #     return[
+    #         sg.Text('CMD', font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, size=(5, 1), text_color=TEXT_COLOR, justification='centere', pad=(0,0)),
+    #         sg.DD(dropdown_options, font=(FONT_MAIN, 20), size=(20, 15), pad=(0,0)),
+    #         sg.Button('Send', font=FONT_BUTTON, size=(5, 1), pad=(0,0))
+    #     ]
 
     def create_gui_layout(self):
         layout = [
-            [sg.Column([self.create_top_banner()], pad=(4,4))],
+            [sg.Column([self.create_top_banner()], pad=(4,4), justification="right")],
             [sg.Column([self.create_second_row()], pad=(4,4))],
             [sg.Column([self.create_third_row()], pad=(4,4))],
             [sg.Column([self.create_fourth_row()], pad=(4,4))],
             [sg.Column([self.create_fifth_row()], pad=(4,4))],
             [sg.Column([self.create_sixth_row()], pad=(4,4))],
-            [sg.Column([self.create_seventh_row()], pad=(4,4))],
+            # [sg.Column([self.create_seventh_row()], pad=(4,4))],
 
         ]
         return layout
