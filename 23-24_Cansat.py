@@ -119,7 +119,7 @@ class CanSat:
 
 
     def create_top_banner(self):
-        dropdown_options = ["CMD,2031,CX,ON", "CMD,2031,CX,OFF", "CMD,2031,SIM,ENABLE", "CMD,2031,SIM,ACTIVATE", "CM,2031,SIM,DISABLE", "CMD,2031,ST,<UTC_TIME>", "CMD,2031,SIMP,<PRESSURE>"]
+        dropdown_options = ["CMD,2031,CX,ON", "CMD,2031,CX,OFF", "CMD,2031,SIM,ENABLE", "CMD,2031,SIM,ACTIVATE", "CM,2031,SIM,DISABLE", "CMD,2031,ST,<UTC_TIME>", "CMD,2031,SIMP,<PRESSURE>", "CMD,2031,CAL", "CMD,2031,BCN,ON", "CMD,2031,BCN,OFF"]
         return [
             sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(15, 1), justification='left', key='TEAM_ID', pad=(0, 0)),
             sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='MISSION_TIME', pad=(0, 0)),
