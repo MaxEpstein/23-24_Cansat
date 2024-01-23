@@ -22,9 +22,11 @@ GRAPH_BACKGROUND_COLOR = 'white'  # White background color for graphs
 GRAPH_TEXT_COLOR = 'white'  # Text color for graph labels, titles, and axes
 
 # Font definitions
-FONT_TITLE = ('Helvetica', 16)
+FONT_TITLE = ('Helvetica', 17)
 FONT_MAIN = ('Helvetica', 14)
 FONT_BUTTON = ('Helvetica', 12)
+
+sg.theme_background_color(PRIMARY_COLOR)
 
 class CanSat:
     def __init__(self, csv_file_path):
@@ -55,7 +57,7 @@ class CanSat:
         self.df = pd.read_csv(self.csv_file_path)
         self.graph_canvases = {}
         self.layout = self.create_gui_layout()
-        self.window = sg.Window('CanSat Dashboard', self.layout, background_color='#09103d', finalize=True)
+        self.window = sg.Window('CanSat Dashboard', self.layout, background_color=PRIMARY_COLOR, finalize=True)
         self.window.move(0, 0)
 
         self.simulation_mode = False  # Simulation mode flag
@@ -95,7 +97,6 @@ class CanSat:
         """Format the key by replacing underscores with spaces and capitalizing each word."""
         return key.replace('_', ' ').upper()
     
-     
     def update_graphs(self, data):
         for key, (fig, ax) in self.graphs.items():
             ax.clear()
@@ -118,29 +119,34 @@ class CanSat:
 
 
     def create_top_banner(self):
+        dropdown_options = ["CMD,2031,CX,ON", "CMD,2031,CX,OFF", "CMD,2031,SIM,ENABLE", "CMD,2031,SIM,ACTIVATE", "CM,2031,SIM,DISABLE", "CMD,2031,ST,<UTC_TIME>", "CMD,2031,SIMP,<PRESSURE>"]
         return [
-            sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=(FONT_TITLE, 30), background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(15, 1), justification='centere', key='TEAM_ID', pad=(0,0)),
-            sg.Text(self.data['MISSION_TIME'], font=(FONT_TITLE, 30), background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='centere', key='MISSION_TIME', pad=(0,0)),
-            sg.Button('Connect', font=(FONT_BUTTON, 20), key='Connect', pad=(1,1)),
-            sg.Button('Calibrate', font=(FONT_BUTTON, 20), key='Calibrate', pad=(1,1)),
-            sg.Button('Simulation Mode', font=(FONT_BUTTON, 20), key='Sim_Mode', pad=(1,1)),
-            sg.Button(font=FONT_BUTTON, button_color=PRIMARY_COLOR, border_width=0, image_filename="close_button_edited.png", pad=(0,0))   # Simulation mode button
+            sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(15, 1), justification='left', key='TEAM_ID', pad=(0, 0)),
+            sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='MISSION_TIME', pad=(0, 0)),
+            sg.Button('Calibrate', font=FONT_BUTTON, image_filename="button_calibrate_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
+            sg.Button('Connect', font=FONT_BUTTON, image_filename="button_connect_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
+            sg.Button('Simulation Mode', font=FONT_BUTTON, key='Sim_Mode', image_filename="button_simulate_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
+            sg.Button(font=FONT_BUTTON, button_color=PRIMARY_COLOR, border_width=0, image_filename="close_button_edited.png", pad=(5, 0), expand_x=True, expand_y = False),
+            sg.Text("white space here - Sarah was here", text_color=PRIMARY_COLOR, background_color=PRIMARY_COLOR),
+            sg.Text('CMD', font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, size=(5, 1), text_color=TEXT_COLOR, justification='right', pad=(0,0)),
+            sg.DD(dropdown_options, font=(FONT_MAIN, 20), size=(30, 15), pad=(0,0)),
+            sg.Button('Send', font=FONT_BUTTON, size=(5, 1), pad=(0,0))
         ]
     
     def create_second_row(self):
         return [
-            sg.Text('PC DEPLOY: ' + self.data['PC_DEPLOYED'], font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='PC_DEPLOYED', pad=(0, 0)),
-            sg.Text('Mode: ' + self.data['MODE'], font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='MODE', pad=(0, 0)),
-            sg.Text('GPS Time: ' + self.data['GPS_TIME'], font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(25, 1), justification='left', key='GPS_TIME', pad=(0, 0)),
-            sg.Text('Software State: ' + self.data['STATE'], font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='STATE', pad=(0, 0))
+            sg.Text('PC DEPLOY: ' + self.data['PC_DEPLOYED'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='PC_DEPLOYED', pad=(0, 0)),
+            sg.Text('Mode: ' + self.data['MODE'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='MODE', pad=(0, 0)),
+            sg.Text('GPS Time: ' + self.data['GPS_TIME'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(25, 1), justification='left', key='GPS_TIME', pad=(0, 0)),
+            sg.Text('Software State: ' + self.data['STATE'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='STATE', pad=(0, 0))
         ]
 
     def create_third_row(self):
         return [
-            sg.Text('Packet Count: ' + str(self.data['PACKET_COUNT']), font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='PC1', pad=(0, 0)),
-            sg.Text('HS Deploy: ' + self.data['HS_DEPLOYED'], font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='HS_DEPLOYED', pad=(0,0)),
-            sg.Text('GPS Sat: ' + str(self.data['GPS_SATS']), font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(25, 1), justification='left', key='GPS_SATS', pad=(0,0)),
-            sg.Text('CMD Echo: ' + self.data['CMD_ECHO'], font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='CMD_ECHO', pad=(0,0))
+            sg.Text('Packet Count: ' + str(self.data['PACKET_COUNT']), font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='PC1', pad=(0, 0)),
+            sg.Text('HS Deploy: ' + self.data['HS_DEPLOYED'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='HS_DEPLOYED', pad=(0,0)),
+            sg.Text('GPS Sat: ' + str(self.data['GPS_SATS']), font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(25, 1), justification='left', key='GPS_SATS', pad=(0,0)),
+            sg.Text('CMD Echo: ' + self.data['CMD_ECHO'], font=FONT_MAIN, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='CMD_ECHO', pad=(0,0))
         ]
 
     def create_fourth_row(self):
@@ -169,13 +175,13 @@ class CanSat:
             sg.Canvas(key='graph_canvas_rot_z', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0))
         ]
 
-    def create_seventh_row(self):
-        dropdown_options = ["bleh", "blah", "bloh"]
-        return[
-            sg.Text('CMD', font=(FONT_MAIN, 25), background_color=PRIMARY_COLOR, size=(5, 1), text_color=TEXT_COLOR, justification='centere', pad=(0,0)),
-            sg.DD(dropdown_options, font=(FONT_MAIN, 25), size=(20, 15), pad=(0,0)),
-            sg.Button('Send', font=FONT_BUTTON, size=(5, 1), pad=(1,1))
-        ]
+    # def create_seventh_row(self):
+    #     dropdown_options = ["bleh", "blah", "bloh"]
+    #     return[
+    #         sg.Text('CMD', font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, size=(5, 1), text_color=TEXT_COLOR, justification='centere', pad=(0,0)),
+    #         sg.DD(dropdown_options, font=(FONT_MAIN, 20), size=(20, 15), pad=(0,0)),
+    #         sg.Button('Send', font=FONT_BUTTON, size=(5, 1), pad=(0,0))
+    #     ]
 
     def create_gui_layout(self):
         layout = [
@@ -185,7 +191,7 @@ class CanSat:
             [sg.Column([self.create_fourth_row()], pad=(4,4))],
             [sg.Column([self.create_fifth_row()], pad=(4,4))],
             [sg.Column([self.create_sixth_row()], pad=(4,4))],
-            [sg.Column([self.create_seventh_row()], pad=(4,4))],
+            # [sg.Column([self.create_seventh_row()], pad=(4,4))],
 
         ]
         return layout
@@ -216,7 +222,7 @@ class CanSat:
             self.display_all_graphs()
             
             # Update GUI elements
-            self.update_gui_elements() 
+            self.update_gui_elements()
             end_time = time.perf_counter()
             duration = round(end_time-start_time, 5)
             print(f'Refresh rate: {duration} seconds')
@@ -334,7 +340,7 @@ class CanSat:
 
 
 def main():
-    csv_file_path = "SimCSV.csv"
+    csv_file_path = "Sample_Flight.csv"
     cansat = CanSat(csv_file_path)
     cansat.run_gui()
 
