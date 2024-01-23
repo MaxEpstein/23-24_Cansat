@@ -127,9 +127,9 @@ class CanSat:
             sg.Button('Connect', font=FONT_BUTTON, image_filename="button_connect_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
             sg.Button('Simulation Mode', font=FONT_BUTTON, key='Sim_Mode', image_filename="button_simulate_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
             sg.Button(font=FONT_BUTTON, button_color=PRIMARY_COLOR, border_width=0, image_filename="close_button_edited.png", pad=(5, 0), expand_x=True, expand_y = False),
-            sg.Text("white space here - Sarah was here", text_color=PRIMARY_COLOR, background_color=PRIMARY_COLOR),
+            sg.Text("Eggsplorer rocks!!!!", text_color=PRIMARY_COLOR, background_color=PRIMARY_COLOR), # Just extra text to make CMD section right justified 
             sg.Text('CMD', font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, size=(5, 1), text_color=TEXT_COLOR, justification='right', pad=(0,0)),
-            sg.DD(dropdown_options, font=(FONT_MAIN, 20), size=(30, 15), pad=(0,0)),
+            sg.DD(dropdown_options, font=(FONT_MAIN, 20), size=(26, 15), pad=(0,0)),
             sg.Button('Send', font=FONT_BUTTON, size=(5, 1), pad=(0,0))
         ]
     
