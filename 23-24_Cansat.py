@@ -170,6 +170,7 @@ class CanSat:
     def create_sixth_row(self):
         graph_size = (250, 250)  # Adjust size as needed
         return[
+            sg.Text("Eggsplorer rocks!!! Go Gators!!!", text_color=PRIMARY_COLOR, background_color=PRIMARY_COLOR), # Just extra text to make CMD section right justified 
             sg.Canvas(key='graph_canvas_tilt_x', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0)),
             sg.Canvas(key='graph_canvas_tilt_y', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0)),
             sg.Canvas(key='graph_canvas_rot_z', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0))
