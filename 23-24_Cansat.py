@@ -26,6 +26,8 @@ FONT_TITLE = ('Helvetica', 17)
 FONT_MAIN = ('Helvetica', 14)
 FONT_BUTTON = ('Helvetica', 12)
 
+start = 0
+
 sg.theme_background_color(PRIMARY_COLOR)
 
 class CanSat:
@@ -98,6 +100,8 @@ class CanSat:
         return key.replace('_', ' ').upper()
     
     def update_graphs(self, data):
+        self.data["GPS_TIME"] = str(self.df["GPS_TIME"].to_list()[-1])[11:][:-7]
+        # self.data["MISSION_TIME"] = self.getMissionTime()
         for key, (fig, ax) in self.graphs.items():
             ax.clear()
             if key in data and 'time' in data and len(data[key]) == len(data['time']):
@@ -119,6 +123,7 @@ class CanSat:
 
 
     def create_top_banner(self):
+        # NOTE: Things like <PRESSURE> will not have values manually inputted, it would be automatically read from the CSV.
         dropdown_options = ["CMD,2031,CX,ON", "CMD,2031,CX,OFF", "CMD,2031,SIM,ENABLE", "CMD,2031,SIM,ACTIVATE", "CM,2031,SIM,DISABLE", "CMD,2031,ST,<UTC_TIME>", "CMD,2031,SIMP,<PRESSURE>", "CMD,2031,CAL", "CMD,2031,BCN,ON", "CMD,2031,BCN,OFF"]
         return [
             sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(15, 1), justification='left', key='TEAM_ID', pad=(0, 0)),
@@ -170,19 +175,11 @@ class CanSat:
     def create_sixth_row(self):
         graph_size = (250, 250)  # Adjust size as needed
         return[
-            sg.Text("Eggsplorer rocks!!! Go Gators!!!", text_color=PRIMARY_COLOR, background_color=PRIMARY_COLOR), # Just extra text to make CMD section right justified 
+            sg.Text("Eggsplorer rocks!!! Go Gators!!!", text_color=PRIMARY_COLOR, background_color=PRIMARY_COLOR), # Just extra text to make this row of graphs centered.
             sg.Canvas(key='graph_canvas_tilt_x', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0)),
             sg.Canvas(key='graph_canvas_tilt_y', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0)),
             sg.Canvas(key='graph_canvas_rot_z', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0))
         ]
-
-    # def create_seventh_row(self):
-    #     dropdown_options = ["bleh", "blah", "bloh"]
-    #     return[
-    #         sg.Text('CMD', font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, size=(5, 1), text_color=TEXT_COLOR, justification='centere', pad=(0,0)),
-    #         sg.DD(dropdown_options, font=(FONT_MAIN, 20), size=(20, 15), pad=(0,0)),
-    #         sg.Button('Send', font=FONT_BUTTON, size=(5, 1), pad=(0,0))
-    #     ]
 
     def create_gui_layout(self):
         layout = [
@@ -192,13 +189,39 @@ class CanSat:
             [sg.Column([self.create_fourth_row()], pad=(4,4))],
             [sg.Column([self.create_fifth_row()], pad=(4,4))],
             [sg.Column([self.create_sixth_row()], pad=(4,4))],
-            # [sg.Column([self.create_seventh_row()], pad=(4,4))],
-
         ]
         return layout
 
     def set_data(self, data_dict):
         self.data.update(data_dict)
+    
+    # def getMissionTime():
+    #     duration = time.time()-start
+
+    #     hours = duration / 3600
+    #     minutes = duration / 60
+    #     seconds = duration % 60
+
+    #     hours_str = ""
+    #     minutes_str = ""
+    #     seconds_str = ""
+
+    #     if hours < 10:
+    #         hours_str = "0" + str(hours)
+    #     else:
+    #         hours_str = hours
+        
+    #     if minutes < 10:
+    #         minutes_str = "0" + str(minutes)
+    #     else:
+    #         minutes_str = minutes
+        
+    #     if seconds < 10:
+    #         seconds_str = "0" + str(seconds)
+    #     else:
+    #         seconds_str = seconds
+        
+    #     return hours_str + ":" + minutes_str + ":" + seconds_str
 
     def run_gui(self):
         while True:
@@ -216,6 +239,9 @@ class CanSat:
             if event == 'Connect':
                 print("Connect Button Pressed")
 
+            if event == "Send":
+                print("Send Button Pressed")
+
             # Read and update graphs with new data
             start_time = time.perf_counter()
             new_data = self.read_latest_csv_data()
@@ -226,9 +252,8 @@ class CanSat:
             self.update_gui_elements()
             end_time = time.perf_counter()
             duration = round(end_time-start_time, 5)
-            print(f'Refresh rate: {duration} seconds')
-
-
+            print(f'Refresh rate: {duration} seconds') # Make a try-catch that just tells the program to wait a little bit.
+            
         self.window.close()
 
 
@@ -341,8 +366,9 @@ class CanSat:
 
 
 def main():
-    csv_file_path = "Sample_Flight.csv"
+    csv_file_path = "SimCSV.csv"
     cansat = CanSat(csv_file_path)
+    start = time.time()
     cansat.run_gui()
 
 if __name__ == '__main__':
