@@ -101,6 +101,7 @@ class CanSat:
     
     def update_graphs(self, data):
         self.data["GPS_TIME"] = str(self.df["GPS_TIME"].to_list()[-1])[11:][:-7]
+        self.data["PACKET_COUNT"] = str(self.df["PACKET_COUNT"].to_list()[-1])
         # self.data["MISSION_TIME"] = self.getMissionTime()
         for key, (fig, ax) in self.graphs.items():
             ax.clear()
@@ -195,7 +196,7 @@ class CanSat:
     def set_data(self, data_dict):
         self.data.update(data_dict)
     
-    # def getMissionTime():
+    # def getMissionTime(): TODO: Will be used to change Mission Time in GUI
     #     duration = time.time()-start
 
     #     hours = duration / 3600
@@ -225,6 +226,7 @@ class CanSat:
 
     def run_gui(self):
         while True:
+            start_time = time.perf_counter()
             event, values = self.window.read(timeout=1500)
             if event == sg.WIN_CLOSED or event == '':
                 break
@@ -233,7 +235,7 @@ class CanSat:
                 self.simulation_mode = not self.simulation_mode
                 print(f"Simulation Mode {'Enabled' if self.simulation_mode else 'Disabled'}")
 
-            if event == 'Calibrate': 
+            if event == 'Calibrate':
                 print("Calibrate Button Pressed")
 
             if event == 'Connect':
@@ -243,23 +245,35 @@ class CanSat:
                 print("Send Button Pressed")
 
             # Read and update graphs with new data
-            start_time = time.perf_counter()
-            new_data = self.read_latest_csv_data()
-            self.update_graphs(new_data)
-            self.display_all_graphs()
+            new_data = self.read_latest_csv_data() # Function defintion at Line 263
+            new_data_time = time.perf_counter()
+            duration = round(new_data_time-start_time, 5)
+            print(f'Time to run self.read_latest_csv_data(): {duration} seconds')
+
+            self.update_graphs(new_data) # Function definition at Line 102
+            update_graphs_time = time.perf_counter()
+            duration = round(update_graphs_time-new_data_time, 5)
+            print(f'Time to run self.update_graphs(new_data): {duration} seconds')
+
+            self.display_all_graphs() # Function definition at Line 119
+            display_all_graphs_time = time.perf_counter()
+            duration = round(display_all_graphs_time-update_graphs_time, 5)
+            print(f'Time to run self.display_all_graphs(): {duration} seconds')
             
             # Update GUI elements
-            self.update_gui_elements()
+            self.update_gui_elements() # Function defintion at Line 339
             end_time = time.perf_counter()
             duration = round(end_time-start_time, 5)
+
+            # The actual time is much longer than intended, it takes 2 seconds for the program to run through which is casuing 
+            # the graphs to update very choppy. Average run is 2 seconds, need it to be 1 second.
             print(f'Refresh rate: {duration} seconds') # Make a try-catch that just tells the program to wait a little bit.
             
         self.window.close()
 
 
 
-
-    # Placeholder for data update simulation
+    # Reads the latest row of the csv
     def read_latest_csv_data(self):
         if self.simulation_mode:
             pass
@@ -366,7 +380,9 @@ class CanSat:
 
 
 def main():
-    csv_file_path = "SimCSV.csv"
+    # Use SimCSV.csv if you are able to run the python skit alongside the VSCode
+    # Else use Sample_Flight.csv
+    csv_file_path = "SimCSV.csv" # Have it depend on the mode. I think we might have to create a csv file here too?
     cansat = CanSat(csv_file_path)
     start = time.time()
     cansat.run_gui()

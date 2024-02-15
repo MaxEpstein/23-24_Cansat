@@ -28,7 +28,7 @@ while(packet_count <= 500):
                                        random.randint(1,100),random.randint(1,100),random.randint(1,100),random.randint(1,100),"CXON"]
     # print(df)
     packet_count+=1
-    time.sleep(0.8)
+    time.sleep(1.0)
 
     df.to_csv("SimCSV.csv")
     end = time.perf_counter()
