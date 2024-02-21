@@ -245,6 +245,7 @@ class CanSat:
                 print("Send Button Pressed")
 
             # Read and update graphs with new data
+            # TODO: This command is taking the longest to run.
             new_data = self.read_latest_csv_data() # Function defintion at Line 263
             new_data_time = time.perf_counter()
             duration = round(new_data_time-start_time, 5)
