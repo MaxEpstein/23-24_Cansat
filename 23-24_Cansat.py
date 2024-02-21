@@ -227,7 +227,12 @@ class CanSat:
     def run_gui(self):
         while True:
             start_time = time.perf_counter()
-            event, values = self.window.read(timeout=1500)
+            event, values = self.window.read(timeout=200)
+
+            read_time = time.perf_counter()
+            duration = round(read_time-start_time, 5)
+            print(f'Time to run read: {duration} seconds')
+
             if event == sg.WIN_CLOSED or event == '':
                 break
 
@@ -248,7 +253,7 @@ class CanSat:
             # TODO: This command is taking the longest to run.
             new_data = self.read_latest_csv_data() # Function defintion at Line 263
             new_data_time = time.perf_counter()
-            duration = round(new_data_time-start_time, 5)
+            duration = round(new_data_time-read_time, 5)
             print(f'Time to run self.read_latest_csv_data(): {duration} seconds')
 
             self.update_graphs(new_data) # Function definition at Line 102
