@@ -102,6 +102,7 @@ class CanSat:
     def update_graphs(self, data):
         self.data["GPS_TIME"] = str(self.df["GPS_TIME"].to_list()[-1])[11:][:-7]
         self.data["PACKET_COUNT"] = str(self.df["PACKET_COUNT"].to_list()[-1])
+
         # self.data["MISSION_TIME"] = self.getMissionTime()
         for key, (fig, ax) in self.graphs.items():
             ax.clear()
@@ -196,6 +197,7 @@ class CanSat:
     def set_data(self, data_dict):
         self.data.update(data_dict)
     
+
     # def getMissionTime(): TODO: Will be used to change Mission Time in GUI
     #     duration = time.time()-start
 
@@ -270,7 +272,6 @@ class CanSat:
             self.update_gui_elements() # Function defintion at Line 339
             end_time = time.perf_counter()
             duration = round(end_time-start_time, 5)
-
             print(f'Refresh rate: {duration} seconds') # Make a try-catch that just tells the program to wait a little bit.
             
         self.window.close()
@@ -385,6 +386,7 @@ def main():
     # Use SimCSV.csv if you are able to run the python skit alongside the VSCode
     # Else use Sample_Flight.csv
     csv_file_path = "SimCSV.csv" # Have it depend on the mode. I think we might have to create a csv file here too?
+
     cansat = CanSat(csv_file_path)
     start = time.time()
     cansat.run_gui()
