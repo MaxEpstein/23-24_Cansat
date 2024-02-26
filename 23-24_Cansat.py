@@ -227,7 +227,7 @@ class CanSat:
     def run_gui(self):
         while True:
             start_time = time.perf_counter()
-            event, values = self.window.read(timeout=200)
+            event, values = self.window.read(timeout=200) # Change this to adjust timing reading in the file.
 
             read_time = time.perf_counter()
             duration = round(read_time-start_time, 5)
@@ -249,8 +249,8 @@ class CanSat:
             if event == "Send":
                 print("Send Button Pressed")
 
+
             # Read and update graphs with new data
-            # TODO: This command is taking the longest to run.
             new_data = self.read_latest_csv_data() # Function defintion at Line 263
             new_data_time = time.perf_counter()
             duration = round(new_data_time-read_time, 5)
@@ -271,13 +271,9 @@ class CanSat:
             end_time = time.perf_counter()
             duration = round(end_time-start_time, 5)
 
-            # The actual time is much longer than intended, it takes 2 seconds for the program to run through which is casuing 
-            # the graphs to update very choppy. Average run is 2 seconds, need it to be 1 second.
             print(f'Refresh rate: {duration} seconds') # Make a try-catch that just tells the program to wait a little bit.
             
         self.window.close()
-
-
 
     # Reads the latest row of the csv
     def read_latest_csv_data(self):
