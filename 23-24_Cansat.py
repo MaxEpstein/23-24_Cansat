@@ -62,6 +62,10 @@ class CanSat:
         self.window = sg.Window('CanSat Dashboard', self.layout, background_color=PRIMARY_COLOR, finalize=True)
         self.window.move(0, 0)
 
+        # start at 2 and increment up to 8
+        self.internalpc = 2
+        self.shifter = 0
+
         self.simulation_mode = False  # Simulation mode flag
         self.init_graphs()
             
@@ -102,7 +106,6 @@ class CanSat:
     def update_graphs(self, data):
         self.data["GPS_TIME"] = str(self.df["GPS_TIME"].to_list()[-1])[11:][:-7]
         self.data["PACKET_COUNT"] = str(self.df["PACKET_COUNT"].to_list()[-1])
-
         # self.data["MISSION_TIME"] = self.getMissionTime()
         for key, (fig, ax) in self.graphs.items():
             ax.clear()
@@ -196,7 +199,6 @@ class CanSat:
 
     def set_data(self, data_dict):
         self.data.update(data_dict)
-    
 
     # def getMissionTime(): TODO: Will be used to change Mission Time in GUI
     #     duration = time.time()-start
@@ -238,7 +240,7 @@ class CanSat:
             if event == sg.WIN_CLOSED or event == '':
                 break
 
-            if event == 'Simulation_Mode': # Change this to Sim_Mode to get this branch to work
+            if event == 'Sim_Mode': # Change this to Sim_Mode to get this branch to work
                 self.simulation_mode = not self.simulation_mode
                 print(f"Simulation Mode {'Enabled' if self.simulation_mode else 'Disabled'}")
 
@@ -250,12 +252,11 @@ class CanSat:
 
             if event == "Send":
                 print("Send Button Pressed")
-
-
             # Read and update graphs with new data
+            # TODO: This command is taking the longest to run.
             new_data = self.read_latest_csv_data() # Function defintion at Line 263
             new_data_time = time.perf_counter()
-            duration = round(new_data_time-read_time, 5)
+            duration = round(new_data_time-start_time, 5)
             print(f'Time to run self.read_latest_csv_data(): {duration} seconds')
 
             self.update_graphs(new_data) # Function definition at Line 102
@@ -272,14 +273,50 @@ class CanSat:
             self.update_gui_elements() # Function defintion at Line 339
             end_time = time.perf_counter()
             duration = round(end_time-start_time, 5)
+
+
+            # The actual time is much longer than intended, it takes 2 seconds for the program to run through which is casuing 
+            # the graphs to update very choppy. Average run is 2 seconds, need it to be 1 second.
+
             print(f'Refresh rate: {duration} seconds') # Make a try-catch that just tells the program to wait a little bit.
             
         self.window.close()
 
+
     # Reads the latest row of the csv
     def read_latest_csv_data(self):
         if self.simulation_mode:
-            pass
+            self.df = pd.read_csv("SimCSV.csv")
+            number_of_rows = len(self.df)
+
+            last_rows = []
+
+            print(self.internalpc)
+
+            # Reads in a total of n-1 times because we are shifting by 1 after reading the first two rows
+            if(self.internalpc < 8):
+                self.internalpc += 1
+                last_rows = self.df.head(self.internalpc)
+            else:
+                for j in range(self.internalpc + self.shifter):
+                    last_rows.append(self.df.iloc[j])      # TODO: This doesn't work, will crash, run this so that shifter increments to shift the rows
+                self.shifter += 1
+
+            graph_data = {
+                'time': last_rows['MISSION_TIME'].tolist(),
+                'altitude': last_rows['ALTITUDE'].tolist(),
+                'air_speed': last_rows['AIR_SPEED'].tolist(),
+                'temperature': last_rows['TEMPERATURE'].tolist(),
+                'pressure': last_rows['PRESSURE'].tolist(),
+                'voltage': last_rows['VOLTAGE'].tolist(),
+                'gps_altitude': last_rows['GPS_ALTITUDE'].tolist(),
+                'gps_latitude': last_rows['GPS_LATITUDE'].tolist(),
+                'gps_longitude': last_rows['GPS_LONGITUDE'].tolist(),
+                'tilt_x': last_rows['TILT_X'].tolist(),
+                'tilt_y': last_rows['TILT_Y'].tolist(),
+                'rot_z': last_rows['ROT_Z'].tolist()
+            }
+
         else:
             self.df = pd.read_csv(self.csv_file_path)
 
@@ -301,7 +338,7 @@ class CanSat:
                 'rot_z': last_rows['ROT_Z'].tolist()
                 # Add any additional fields you need
             }
-            return graph_data
+        return graph_data
 
 
         '''
@@ -386,7 +423,6 @@ def main():
     # Use SimCSV.csv if you are able to run the python skit alongside the VSCode
     # Else use Sample_Flight.csv
     csv_file_path = "SimCSV.csv" # Have it depend on the mode. I think we might have to create a csv file here too?
-
     cansat = CanSat(csv_file_path)
     start = time.time()
     cansat.run_gui()

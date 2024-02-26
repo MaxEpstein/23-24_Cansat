@@ -20,7 +20,8 @@ df.loc[0] = [2031, str(datetime.now())[11:][:-7],1,"S","LAUNCH_WAIT",random.rand
                                        random.randint(1,100),random.randint(1,100),random.randint(1,100),random.randint(1,100),"CXON"]
 
 packet_count = 2
-while(packet_count <= 500):
+
+while(packet_count <= 1000):
     start = time.perf_counter()
     df.loc[len(df.index)] = [2031, str(datetime.now())[11:][:-7],packet_count,"S","LAUNCH_WAIT",random.randint(1,100),
                                        random.randint(1,100),"N","N",random.randint(1,100),random.randint(1,100),random.randint(1,100),
@@ -35,4 +36,4 @@ while(packet_count <= 500):
     duration = round(end - start, 5)
     print(f'Time to push data: {duration} seconds')
 
-os.remove("SimCSV.csv")
+# os.remove("SimCSV.csv")
