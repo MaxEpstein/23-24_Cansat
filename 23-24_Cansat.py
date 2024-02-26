@@ -62,6 +62,10 @@ class CanSat:
         self.window = sg.Window('CanSat Dashboard', self.layout, background_color=PRIMARY_COLOR, finalize=True)
         self.window.move(0, 0)
 
+        # start at 2 and increment up to 8
+        self.internalpc = 2
+        self.shifter = 0
+
         self.simulation_mode = False  # Simulation mode flag
         self.init_graphs()
             
@@ -227,11 +231,11 @@ class CanSat:
     def run_gui(self):
         while True:
             start_time = time.perf_counter()
-            event, values = self.window.read(timeout=1500)
+            event, values = self.window.read(timeout=200)
             if event == sg.WIN_CLOSED or event == '':
                 break
 
-            if event == 'Simulation_Mode': # Change this to Sim_Mode to get this branch to work
+            if event == 'Sim_Mode': # Change this to Sim_Mode to get this branch to work
                 self.simulation_mode = not self.simulation_mode
                 print(f"Simulation Mode {'Enabled' if self.simulation_mode else 'Disabled'}")
 
@@ -277,7 +281,37 @@ class CanSat:
     # Reads the latest row of the csv
     def read_latest_csv_data(self):
         if self.simulation_mode:
-            pass
+            self.df = pd.read_csv("SimCSV.csv")
+            number_of_rows = len(self.df)
+
+            last_rows = []
+
+            print(self.internalpc)
+
+            # Reads in a total of n-1 times because we are shifting by 1 after reading the first two rows
+            if(self.internalpc < 8):
+                self.internalpc += 1
+                last_rows = self.df.head(self.internalpc)
+            else:
+                for j in range(self.internalpc + self.shifter):
+                    last_rows.append(self.df.iloc[j])      # TODO: This doesn't work, will crash, run this so that shifter increments to shift the rows
+                self.shifter += 1
+
+            graph_data = {
+                'time': last_rows['MISSION_TIME'].tolist(),
+                'altitude': last_rows['ALTITUDE'].tolist(),
+                'air_speed': last_rows['AIR_SPEED'].tolist(),
+                'temperature': last_rows['TEMPERATURE'].tolist(),
+                'pressure': last_rows['PRESSURE'].tolist(),
+                'voltage': last_rows['VOLTAGE'].tolist(),
+                'gps_altitude': last_rows['GPS_ALTITUDE'].tolist(),
+                'gps_latitude': last_rows['GPS_LATITUDE'].tolist(),
+                'gps_longitude': last_rows['GPS_LONGITUDE'].tolist(),
+                'tilt_x': last_rows['TILT_X'].tolist(),
+                'tilt_y': last_rows['TILT_Y'].tolist(),
+                'rot_z': last_rows['ROT_Z'].tolist()
+            }
+
         else:
             self.df = pd.read_csv(self.csv_file_path)
 
@@ -299,7 +333,7 @@ class CanSat:
                 'rot_z': last_rows['ROT_Z'].tolist()
                 # Add any additional fields you need
             }
-            return graph_data
+        return graph_data
 
 
         '''
