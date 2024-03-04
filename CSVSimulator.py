@@ -36,4 +36,4 @@ while(packet_count <= 1000):
     duration = round(end - start, 5)
     print(f'Time to push data: {duration} seconds')
 
-# os.remove("SimCSV.csv")
+os.remove("SimCSV.csv")

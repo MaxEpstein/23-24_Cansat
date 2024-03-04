@@ -63,7 +63,7 @@ class CanSat:
         self.window.move(0, 0)
 
         # start at 2 and increment up to 8
-        self.internalpc = 2
+        self.internalpc = 1
         self.shifter = 0
 
         self.simulation_mode = False  # Simulation mode flag
@@ -286,58 +286,39 @@ class CanSat:
     # Reads the latest row of the csv
     def read_latest_csv_data(self):
         if self.simulation_mode:
-            self.df = pd.read_csv("SimCSV.csv")
-            number_of_rows = len(self.df)
+            pass
+        
+        #self.df = pd.read_csv(self.csv_file_path)
 
-            last_rows = []
-
-            print(self.internalpc)
-
-            # Reads in a total of n-1 times because we are shifting by 1 after reading the first two rows
-            if(self.internalpc < 8):
-                self.internalpc += 1
-                last_rows = self.df.head(self.internalpc)
-            else:
-                for j in range(self.internalpc + self.shifter):
-                    last_rows.append(self.df.iloc[j])      # TODO: This doesn't work, will crash, run this so that shifter increments to shift the rows
-                self.shifter += 1
-
-            graph_data = {
-                'time': last_rows['MISSION_TIME'].tolist(),
-                'altitude': last_rows['ALTITUDE'].tolist(),
-                'air_speed': last_rows['AIR_SPEED'].tolist(),
-                'temperature': last_rows['TEMPERATURE'].tolist(),
-                'pressure': last_rows['PRESSURE'].tolist(),
-                'voltage': last_rows['VOLTAGE'].tolist(),
-                'gps_altitude': last_rows['GPS_ALTITUDE'].tolist(),
-                'gps_latitude': last_rows['GPS_LATITUDE'].tolist(),
-                'gps_longitude': last_rows['GPS_LONGITUDE'].tolist(),
-                'tilt_x': last_rows['TILT_X'].tolist(),
-                'tilt_y': last_rows['TILT_Y'].tolist(),
-                'rot_z': last_rows['ROT_Z'].tolist()
-            }
-
+        if (self.internalpc > 8):
+            last_rows = pd.read_csv('SimCSV.csv', header=None, names=["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "MODE", "STATE", "ALTITUDE",
+                "AIR_SPEED", "HS_DEPLOYED", "PC_DEPLOYED", "TEMPERATURE", "PRESSURE", "VOLTAGE",
+                "GPS_TIME","GPS_LATITUDE", "GPS_LONGITUDE", 
+                "GPS_ALTITUDE", "GPS_SATS","TILT_X", "TILT_Y", "ROT_Z", "CMD_ECHO"], skiprows=internalpc-8)
+    
         else:
-            self.df = pd.read_csv(self.csv_file_path)
+            last_rows = pd.read_csv('SimCSV.csv', header=None, names=["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "MODE", "STATE", "ALTITUDE",
+                "AIR_SPEED", "HS_DEPLOYED", "PC_DEPLOYED", "TEMPERATURE", "PRESSURE", "VOLTAGE",
+                "GPS_TIME","GPS_LATITUDE", "GPS_LONGITUDE", 
+                "GPS_ALTITUDE", "GPS_SATS","TILT_X", "TILT_Y", "ROT_Z", "CMD_ECHO"], skiprows=1)
+        
+        self.internalpc += 1
 
-            # Read the last 10 rows
-            last_rows = self.df.tail(10)
-
-            graph_data = {
-                'time': last_rows['MISSION_TIME'].tolist(),
-                'altitude': last_rows['ALTITUDE'].tolist(),
-                'air_speed': last_rows['AIR_SPEED'].tolist(),       # does not exist in Flight_1032.csv hence the error
-                'temperature': last_rows['TEMPERATURE'].tolist(),
-                'pressure': last_rows['PRESSURE'].tolist(),
-                'voltage': last_rows['VOLTAGE'].tolist(),
-                'gps_altitude': last_rows['GPS_ALTITUDE'].tolist(),
-                'gps_latitude': last_rows['GPS_LATITUDE'].tolist(),
-                'gps_longitude': last_rows['GPS_LONGITUDE'].tolist(),
-                'tilt_x': last_rows['TILT_X'].tolist(),
-                'tilt_y': last_rows['TILT_Y'].tolist(),
-                'rot_z': last_rows['ROT_Z'].tolist()
-                # Add any additional fields you need
-            }
+        graph_data = {
+            'time': last_rows['MISSION_TIME'].tolist(),
+            'altitude': last_rows['ALTITUDE'].tolist(),
+            'air_speed': last_rows['AIR_SPEED'].tolist(),       # does not exist in Flight_1032.csv hence the error
+            'temperature': last_rows['TEMPERATURE'].tolist(),
+            'pressure': last_rows['PRESSURE'].tolist(),
+            'voltage': last_rows['VOLTAGE'].tolist(),
+            'gps_altitude': last_rows['GPS_ALTITUDE'].tolist(),
+            'gps_latitude': last_rows['GPS_LATITUDE'].tolist(),
+            'gps_longitude': last_rows['GPS_LONGITUDE'].tolist(),
+            'tilt_x': last_rows['TILT_X'].tolist(),
+            'tilt_y': last_rows['TILT_Y'].tolist(),
+            'rot_z': last_rows['ROT_Z'].tolist()
+            # Add any additional fields you need
+        }
         return graph_data
 
 
