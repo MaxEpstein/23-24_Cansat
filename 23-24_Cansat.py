@@ -63,8 +63,10 @@ class CanSat:
         self.window.move(0, 0)
 
         # start at 2 and increment up to 8
-        self.internalpc = 1
-        self.shifter = 0
+        if(len(self.df) < 1):
+            self.internalpc = 1
+        else:
+            self.internalpc = len(self.df)
 
         self.simulation_mode = False  # Simulation mode flag
         self.init_graphs()
@@ -290,11 +292,13 @@ class CanSat:
         
         #self.df = pd.read_csv(self.csv_file_path)
 
+        # Look into packet count for CSV as internalpc incrememnts by 1 by the time the CSV gets two new rows hence the slow increase of the size of last_rows
         if (self.internalpc > 8):
             last_rows = pd.read_csv('SimCSV.csv', header=None, names=["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "MODE", "STATE", "ALTITUDE",
                 "AIR_SPEED", "HS_DEPLOYED", "PC_DEPLOYED", "TEMPERATURE", "PRESSURE", "VOLTAGE",
                 "GPS_TIME","GPS_LATITUDE", "GPS_LONGITUDE", 
-                "GPS_ALTITUDE", "GPS_SATS","TILT_X", "TILT_Y", "ROT_Z", "CMD_ECHO"], skiprows=internalpc-8)
+                "GPS_ALTITUDE", "GPS_SATS","TILT_X", "TILT_Y", "ROT_Z", "CMD_ECHO"], skiprows=self.internalpc-8)
+            print(len(last_rows))
     
         else:
             last_rows = pd.read_csv('SimCSV.csv', header=None, names=["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "MODE", "STATE", "ALTITUDE",
