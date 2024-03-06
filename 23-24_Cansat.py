@@ -256,48 +256,54 @@ class CanSat:
                 print("Send Button Pressed")
             # Read and update graphs with new data
             # TODO: This command is taking the longest to run.
-            new_data = self.read_latest_csv_data() # Function defintion at Line 263
-            new_data_time = time.perf_counter()
-            duration = round(new_data_time-start_time, 5)
-            print(f'Time to run self.read_latest_csv_data(): {duration} seconds')
+                
+            data_one_col = pd.read_csv('SimCSV.csv', usecols=["PACKET_COUNT"])
+            if (len(data_one_col) > self.internalpc):
+                self.internalpc = len(data_one_col)
+                
+                new_data = self.read_latest_csv_data(data_one_col) # Function defintion at Line 263
+                
+                
+                new_data_time = time.perf_counter()
+                duration = round(new_data_time-start_time, 5)
+                print(f'Time to run self.read_latest_csv_data(): {duration} seconds')
 
-            self.update_graphs(new_data) # Function definition at Line 102
-            update_graphs_time = time.perf_counter()
-            duration = round(update_graphs_time-new_data_time, 5)
-            print(f'Time to run self.update_graphs(new_data): {duration} seconds')
+                self.update_graphs(new_data) # Function definition at Line 102
+                update_graphs_time = time.perf_counter()
+                duration = round(update_graphs_time-new_data_time, 5)
+                print(f'Time to run self.update_graphs(new_data): {duration} seconds')
 
-            self.display_all_graphs() # Function definition at Line 119
-            display_all_graphs_time = time.perf_counter()
-            duration = round(display_all_graphs_time-update_graphs_time, 5)
-            print(f'Time to run self.display_all_graphs(): {duration} seconds')
-            
-            # Update GUI elements
-            self.update_gui_elements() # Function defintion at Line 339
-            end_time = time.perf_counter()
-            duration = round(end_time-start_time, 5)
+                self.display_all_graphs() # Function definition at Line 119
+                display_all_graphs_time = time.perf_counter()
+                duration = round(display_all_graphs_time-update_graphs_time, 5)
+                print(f'Time to run self.display_all_graphs(): {duration} seconds')
+                
+                # Update GUI elements
+                self.update_gui_elements() # Function defintion at Line 339
+                end_time = time.perf_counter()
+                duration = round(end_time-start_time, 5)
 
 
-            # The actual time is much longer than intended, it takes 2 seconds for the program to run through which is casuing 
-            # the graphs to update very choppy. Average run is 2 seconds, need it to be 1 second.
+                # The actual time is much longer than intended, it takes 2 seconds for the program to run through which is casuing 
+                # the graphs to update very choppy. Average run is 2 seconds, need it to be 1 second.
 
-            print(f'Refresh rate: {duration} seconds') # Make a try-catch that just tells the program to wait a little bit.
+                print(f'Refresh rate: {duration} seconds') # Make a try-catch that just tells the program to wait a little bit.
             
         self.window.close()
 
 
     # Reads the latest row of the csv
-    def read_latest_csv_data(self):
+    def read_latest_csv_data(self, data_one_col):
         if self.simulation_mode:
             pass
         
         #self.df = pd.read_csv(self.csv_file_path)
-
         # Look into packet count for CSV as internalpc incrememnts by 1 by the time the CSV gets two new rows hence the slow increase of the size of last_rows
-        if (self.internalpc > 8):
+        if (len(data_one_col) > 7):
             last_rows = pd.read_csv('SimCSV.csv', header=None, names=["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "MODE", "STATE", "ALTITUDE",
                 "AIR_SPEED", "HS_DEPLOYED", "PC_DEPLOYED", "TEMPERATURE", "PRESSURE", "VOLTAGE",
                 "GPS_TIME","GPS_LATITUDE", "GPS_LONGITUDE", 
-                "GPS_ALTITUDE", "GPS_SATS","TILT_X", "TILT_Y", "ROT_Z", "CMD_ECHO"], skiprows=self.internalpc-8)
+                "GPS_ALTITUDE", "GPS_SATS","TILT_X", "TILT_Y", "ROT_Z", "CMD_ECHO"], skiprows=len(data_one_col)-7)
             print(len(last_rows))
     
         else:
@@ -305,8 +311,6 @@ class CanSat:
                 "AIR_SPEED", "HS_DEPLOYED", "PC_DEPLOYED", "TEMPERATURE", "PRESSURE", "VOLTAGE",
                 "GPS_TIME","GPS_LATITUDE", "GPS_LONGITUDE", 
                 "GPS_ALTITUDE", "GPS_SATS","TILT_X", "TILT_Y", "ROT_Z", "CMD_ECHO"], skiprows=1)
-        
-        self.internalpc += 1
 
         graph_data = {
             'time': last_rows['MISSION_TIME'].tolist(),
