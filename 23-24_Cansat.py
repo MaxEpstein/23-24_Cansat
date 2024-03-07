@@ -204,34 +204,6 @@ class CanSat:
     def set_data(self, data_dict):
         self.data.update(data_dict)
 
-    # def getMissionTime(): TODO: Will be used to change Mission Time in GUI
-    #     duration = time.time()-start
-
-    #     hours = duration / 3600
-    #     minutes = duration / 60
-    #     seconds = duration % 60
-
-    #     hours_str = ""
-    #     minutes_str = ""
-    #     seconds_str = ""
-
-    #     if hours < 10:
-    #         hours_str = "0" + str(hours)
-    #     else:
-    #         hours_str = hours
-        
-    #     if minutes < 10:
-    #         minutes_str = "0" + str(minutes)
-    #     else:
-    #         minutes_str = minutes
-        
-    #     if seconds < 10:
-    #         seconds_str = "0" + str(seconds)
-    #     else:
-    #         seconds_str = seconds
-        
-    #     return hours_str + ":" + minutes_str + ":" + seconds_str
-
     def run_gui(self):
         while True:
             start_time = time.perf_counter()
