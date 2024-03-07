@@ -105,15 +105,17 @@ class CanSat:
         """Format the key by replacing underscores with spaces and capitalizing each word."""
         return key.replace('_', ' ').upper()
     
-    def update_graphs(self, data):
-        self.data["GPS_TIME"] = str(self.df["GPS_TIME"].to_list()[-1])[11:][:-7]
-        self.data["PACKET_COUNT"] = str(self.df["PACKET_COUNT"].to_list()[-1])
+    def update_graphs(self, new_data):
+        self.data["MISSION_TIME"] = str(new_data["time"][-1])
+        self.data["GPS_TIME"] = str(new_data["gps_time"][-1])
+        self.data["PACKET_COUNT"] = str(new_data["packet_count"][-1])
+        self.data["GPS_SATS"] = str(new_data["gps_sat"][-1])
         # self.data["MISSION_TIME"] = self.getMissionTime()
         for key, (fig, ax) in self.graphs.items():
             ax.clear()
-            if key in data and 'time' in data and len(data[key]) == len(data['time']):
+            if key in new_data and 'time' in new_data and len(new_data[key]) == len(new_data['time']):
                 formatted_key = self.format_key(key)  # Format the key for display
-                ax.plot(data['time'], data[key], color='black')
+                ax.plot(new_data['time'], new_data[key], color='black')
                 ax.set_xlabel('TIME', color=GRAPH_TEXT_COLOR)
                 ax.set_ylabel(formatted_key, color=GRAPH_TEXT_COLOR)  # Use formatted key here
                 
@@ -254,10 +256,14 @@ class CanSat:
 
             if event == "Send":
                 print("Send Button Pressed")
-            # Read and update graphs with new data
-            # TODO: This command is taking the longest to run.
+
+            # Read and update graphs with new data                
+            try:
+                data_one_col = pd.read_csv('SimCSV.csv', usecols=["PACKET_COUNT"]) # Checks to see if the csv file can be read.
+            except:
+                print("CAN'T READ") # If it can't be read, skips everything below this line.
+                continue
                 
-            data_one_col = pd.read_csv('SimCSV.csv', usecols=["PACKET_COUNT"])
             if (len(data_one_col) > self.internalpc):
                 self.internalpc = len(data_one_col)
                 
@@ -304,7 +310,6 @@ class CanSat:
                 "AIR_SPEED", "HS_DEPLOYED", "PC_DEPLOYED", "TEMPERATURE", "PRESSURE", "VOLTAGE",
                 "GPS_TIME","GPS_LATITUDE", "GPS_LONGITUDE", 
                 "GPS_ALTITUDE", "GPS_SATS","TILT_X", "TILT_Y", "ROT_Z", "CMD_ECHO"], skiprows=len(data_one_col)-7)
-            print(len(last_rows))
     
         else:
             last_rows = pd.read_csv('SimCSV.csv', header=None, names=["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "MODE", "STATE", "ALTITUDE",
@@ -314,19 +319,23 @@ class CanSat:
 
         graph_data = {
             'time': last_rows['MISSION_TIME'].tolist(),
+            'packet_count': last_rows['PACKET_COUNT'].tolist(),
             'altitude': last_rows['ALTITUDE'].tolist(),
             'air_speed': last_rows['AIR_SPEED'].tolist(),       # does not exist in Flight_1032.csv hence the error
             'temperature': last_rows['TEMPERATURE'].tolist(),
             'pressure': last_rows['PRESSURE'].tolist(),
             'voltage': last_rows['VOLTAGE'].tolist(),
             'gps_altitude': last_rows['GPS_ALTITUDE'].tolist(),
+            'gps_time': last_rows['GPS_TIME'].tolist(),
             'gps_latitude': last_rows['GPS_LATITUDE'].tolist(),
             'gps_longitude': last_rows['GPS_LONGITUDE'].tolist(),
+            'gps_sat': last_rows["GPS_SATS"].tolist(),
             'tilt_x': last_rows['TILT_X'].tolist(),
             'tilt_y': last_rows['TILT_Y'].tolist(),
             'rot_z': last_rows['ROT_Z'].tolist()
             # Add any additional fields you need
         }
+
         return graph_data
 
 
