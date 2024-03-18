@@ -98,32 +98,6 @@ class CanSat:
             canvas_widget.pack(fill='both', expand=True)
             self.graph_canvases[key] = (canvas, canvas_widget)
     
-    # Called at Line 249
-    def update_graphs(self, new_data):
-        self.data["MISSION_TIME"] = str(new_data["time"][-1])
-        self.data["GPS_TIME"] = str(new_data["gps_time"][-1])
-        self.data["PACKET_COUNT"] = str(new_data["packet_count"][-1])
-        self.data["GPS_SATS"] = str(new_data["gps_sat"][-1])
-
-        for key, (fig, ax) in self.graphs.items():
-            ax.clear()
-            if key in new_data and 'time' in new_data and len(new_data[key]) == len(new_data['time']):
-                formatted_key = key.replace('_', ' ').upper()  # Format the key by replacing underscores with spaces and capitalizing each word.
-                ax.plot(new_data['time'], new_data[key], color='black')
-                ax.set_xlabel('TIME', color=GRAPH_TEXT_COLOR)
-                ax.set_ylabel(formatted_key, color=GRAPH_TEXT_COLOR)  # Use formatted key here
-                
-                # Set the title with bold font
-                ax.set_title(f'{formatted_key} VS TIME', color=GRAPH_TEXT_COLOR, fontweight='bold')
-                
-                plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
-            self.graph_canvases[key][0].draw()
-
-        # Displays all the new graphs
-        for key, (fig, ax) in self.graphs.items():
-            canvas, canvas_widget = self.graph_canvases[key]
-            canvas.draw()
-
     def create_top_banner(self):
         # NOTE: Things like <PRESSURE> will not have values manually inputted, it would be automatically read from the CSV.
         dropdown_options = ["CMD,2031,CX,ON", "CMD,2031,CX,OFF", "CMD,2031,SIM,ENABLE", "CMD,2031,SIM,ACTIVATE", "CM,2031,SIM,DISABLE", "CMD,2031,ST,<UTC_TIME>", "CMD,2031,SIMP,<PRESSURE>", "CMD,2031,CAL", "CMD,2031,BCN,ON", "CMD,2031,BCN,OFF"]
@@ -192,10 +166,85 @@ class CanSat:
             [sg.Column([self.create_fifth_row()], pad=(4,4))],
             [sg.Column([self.create_sixth_row()], pad=(4,4))],
         ]
-        return layout
+        return layout   
+    
+    # Reads the latest row of the csv
+    def read_latest_csv_data(self, data_one_col):
+        if self.simulation_mode:
+            pass
+    
+        # Checks to see if there are more than 7 rows into the CSV yet. 
+        if (len(data_one_col) > 7):
+            # > than 7 rows in the CSV so only the last 7 rows are read
+            last_rows = pd.read_csv('SimCSV.csv', header=None, names=["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "MODE", "STATE", "ALTITUDE",
+                "AIR_SPEED", "HS_DEPLOYED", "PC_DEPLOYED", "TEMPERATURE", "PRESSURE", "VOLTAGE",
+                "GPS_TIME","GPS_LATITUDE", "GPS_LONGITUDE", 
+                "GPS_ALTITUDE", "GPS_SATS","TILT_X", "TILT_Y", "ROT_Z", "CMD_ECHO"], skiprows=len(data_one_col)-7)
+        else:
+            # <= 7 rows in the CSV, just skips the header row. 
+            last_rows = pd.read_csv('SimCSV.csv', header=None, names=["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "MODE", "STATE", "ALTITUDE",
+                "AIR_SPEED", "HS_DEPLOYED", "PC_DEPLOYED", "TEMPERATURE", "PRESSURE", "VOLTAGE",
+                "GPS_TIME","GPS_LATITUDE", "GPS_LONGITUDE", 
+                "GPS_ALTITUDE", "GPS_SATS","TILT_X", "TILT_Y", "ROT_Z", "CMD_ECHO"], skiprows=1)
 
-    def set_data(self, data_dict):
-        self.data.update(data_dict)
+        graph_data = {
+            'time': last_rows['MISSION_TIME'].tolist(),
+            'packet_count': last_rows['PACKET_COUNT'].tolist(),
+            'altitude': last_rows['ALTITUDE'].tolist(),
+            'air_speed': last_rows['AIR_SPEED'].tolist(),       # does not exist in Flight_1032.csv hence the error
+            'temperature': last_rows['TEMPERATURE'].tolist(),
+            'pressure': last_rows['PRESSURE'].tolist(),
+            'voltage': last_rows['VOLTAGE'].tolist(),
+            'gps_altitude': last_rows['GPS_ALTITUDE'].tolist(),
+            'gps_time': last_rows['GPS_TIME'].tolist(),
+            'gps_latitude': last_rows['GPS_LATITUDE'].tolist(),
+            'gps_longitude': last_rows['GPS_LONGITUDE'].tolist(),
+            'gps_sat': last_rows["GPS_SATS"].tolist(),
+            'tilt_x': last_rows['TILT_X'].tolist(),
+            'tilt_y': last_rows['TILT_Y'].tolist(),
+            'rot_z': last_rows['ROT_Z'].tolist()
+            # Add any additional fields you need
+        }
+        return graph_data
+    
+    # Updates all the graphs on the GUI
+    def update_graphs(self, new_data):
+        self.data["MISSION_TIME"] = str(new_data["time"][-1])
+        self.data["GPS_TIME"] = str(new_data["gps_time"][-1])
+        self.data["PACKET_COUNT"] = str(new_data["packet_count"][-1])
+        self.data["GPS_SATS"] = str(new_data["gps_sat"][-1])
+
+        for key, (fig, ax) in self.graphs.items():
+            ax.clear()
+            if key in new_data and 'time' in new_data and len(new_data[key]) == len(new_data['time']):
+                formatted_key = key.replace('_', ' ').upper()  # Format the key by replacing underscores with spaces and capitalizing each word.
+                ax.plot(new_data['time'], new_data[key], color='black')
+                ax.set_xlabel('TIME', color=GRAPH_TEXT_COLOR)
+                ax.set_ylabel(formatted_key, color=GRAPH_TEXT_COLOR)  # Use formatted key here
+                
+                # Set the title with bold font
+                ax.set_title(f'{formatted_key} VS TIME', color=GRAPH_TEXT_COLOR, fontweight='bold')
+                
+                plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+            self.graph_canvases[key][0].draw()
+
+        # Displays all the new graphs
+        for key, (fig, ax) in self.graphs.items():
+            canvas, canvas_widget = self.graph_canvases[key]
+            canvas.draw()
+    
+    # Updates any text-based data at the top of the GUI
+    def update_header_elements(self):
+        self.window['TEAM_ID'].update('Team ID: ' + str(self.data['TEAM_ID']))
+        self.window['MISSION_TIME'].update('Mission Time: ' + self.data['MISSION_TIME'])
+        self.window['PC1'].update('Packet Count: ' + str(self.data['PACKET_COUNT']))
+        self.window['MODE'].update('Mode: ' + self.data['MODE'])
+        self.window['STATE'].update('Software State: ' + self.data['STATE'])
+        self.window['PC_DEPLOYED'].update('PC Deploy: ' + self.data['PC_DEPLOYED'])
+        self.window['HS_DEPLOYED'].update('HS Deploy: ' + self.data['HS_DEPLOYED'])
+        self.window['GPS_SATS'].update('GPS Sat: ' + str(self.data['GPS_SATS']))
+        self.window['CMD_ECHO'].update('CMD Echo: ' + self.data['CMD_ECHO'])
+        self.window['GPS_TIME'].update('GPS Time: ' + self.data['GPS_TIME'])
 
     def run_gui(self):
         while True:
@@ -228,80 +277,30 @@ class CanSat:
             except:
                 print("CAN'T READ") # If it can't be read, skips everything below this line.
                 continue
-                
+
+            # Correct way to read in data, change filename for simluation mode
             if (len(data_one_col) > self.internalpc):
                 self.internalpc = len(data_one_col)
                 
-                new_data = self.read_latest_csv_data(data_one_col) # Function defintion at Line 263
-                
+                # Reads the latest row of data
+                new_data = self.read_latest_csv_data(data_one_col) # Function defintion at Line 198
                 new_data_time = time.perf_counter()
                 duration = round(new_data_time-start_time, 5)
                     # print(f'Time to run self.read_latest_csv_data(): {duration} seconds')
 
                 # Update header elements
-                self.update_graphs(new_data) # Function definition at Line 102
+                self.update_graphs(new_data) # Function definition at Line 172
                 update_graphs_time = time.perf_counter()
                 duration = round(update_graphs_time-new_data_time, 5)
                     # print(f'Time to run self.update_graphs(new_data): {duration} seconds')
                 
                 # Update header elements
-                self.update_header_elements() # Function defintion at Line 339
+                self.update_header_elements() # Function defintion at Line 237
                 end_time = time.perf_counter()
                 duration = round(end_time-start_time, 5)
                     # print(f'Refresh rate: {duration} seconds') # Make a try-catch that just tells the program to wait a little bit.
             
         self.window.close()
-
-
-    # Reads the latest row of the csv
-    def read_latest_csv_data(self, data_one_col):
-        if self.simulation_mode:
-            pass
-    
-        if (len(data_one_col) > 7):
-            last_rows = pd.read_csv('SimCSV.csv', header=None, names=["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "MODE", "STATE", "ALTITUDE",
-                "AIR_SPEED", "HS_DEPLOYED", "PC_DEPLOYED", "TEMPERATURE", "PRESSURE", "VOLTAGE",
-                "GPS_TIME","GPS_LATITUDE", "GPS_LONGITUDE", 
-                "GPS_ALTITUDE", "GPS_SATS","TILT_X", "TILT_Y", "ROT_Z", "CMD_ECHO"], skiprows=len(data_one_col)-7)
-    
-        else:
-            last_rows = pd.read_csv('SimCSV.csv', header=None, names=["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "MODE", "STATE", "ALTITUDE",
-                "AIR_SPEED", "HS_DEPLOYED", "PC_DEPLOYED", "TEMPERATURE", "PRESSURE", "VOLTAGE",
-                "GPS_TIME","GPS_LATITUDE", "GPS_LONGITUDE", 
-                "GPS_ALTITUDE", "GPS_SATS","TILT_X", "TILT_Y", "ROT_Z", "CMD_ECHO"], skiprows=1)
-
-        graph_data = {
-            'time': last_rows['MISSION_TIME'].tolist(),
-            'packet_count': last_rows['PACKET_COUNT'].tolist(),
-            'altitude': last_rows['ALTITUDE'].tolist(),
-            'air_speed': last_rows['AIR_SPEED'].tolist(),       # does not exist in Flight_1032.csv hence the error
-            'temperature': last_rows['TEMPERATURE'].tolist(),
-            'pressure': last_rows['PRESSURE'].tolist(),
-            'voltage': last_rows['VOLTAGE'].tolist(),
-            'gps_altitude': last_rows['GPS_ALTITUDE'].tolist(),
-            'gps_time': last_rows['GPS_TIME'].tolist(),
-            'gps_latitude': last_rows['GPS_LATITUDE'].tolist(),
-            'gps_longitude': last_rows['GPS_LONGITUDE'].tolist(),
-            'gps_sat': last_rows["GPS_SATS"].tolist(),
-            'tilt_x': last_rows['TILT_X'].tolist(),
-            'tilt_y': last_rows['TILT_Y'].tolist(),
-            'rot_z': last_rows['ROT_Z'].tolist()
-            # Add any additional fields you need
-        }
-        return graph_data
-    
-    # Updates any text-based data at the top of the GUI
-    def update_header_elements(self):
-        self.window['TEAM_ID'].update('Team ID: ' + str(self.data['TEAM_ID']))
-        self.window['MISSION_TIME'].update('Mission Time: ' + self.data['MISSION_TIME'])
-        self.window['PC1'].update('Packet Count: ' + str(self.data['PACKET_COUNT']))
-        self.window['MODE'].update('Mode: ' + self.data['MODE'])
-        self.window['STATE'].update('Software State: ' + self.data['STATE'])
-        self.window['PC_DEPLOYED'].update('PC Deploy: ' + self.data['PC_DEPLOYED'])
-        self.window['HS_DEPLOYED'].update('HS Deploy: ' + self.data['HS_DEPLOYED'])
-        self.window['GPS_SATS'].update('GPS Sat: ' + str(self.data['GPS_SATS']))
-        self.window['CMD_ECHO'].update('CMD Echo: ' + self.data['CMD_ECHO'])
-        self.window['GPS_TIME'].update('GPS Time: ' + self.data['GPS_TIME'])
 
 def main():
     # Use SimCSV.csv if you are able to run the python skit alongside the VSCode
