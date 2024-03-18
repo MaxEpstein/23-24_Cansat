@@ -1,4 +1,3 @@
-
 # 23-24 CanSat Source Code
 # Team Lead: Steele Elliott
 
@@ -8,6 +7,7 @@
 # Matthew Lee 
 # Alex Segelnick
 # Dylan Manauasa
+
 import pandas as pd
 import PySimpleGUI as sg
 import matplotlib.pyplot as plt
@@ -25,8 +25,6 @@ GRAPH_TEXT_COLOR = 'white'  # Text color for graph labels, titles, and axes
 FONT_TITLE = ('Helvetica', 17)
 FONT_MAIN = ('Helvetica', 14)
 FONT_BUTTON = ('Helvetica', 12)
-
-start = 0
 
 sg.theme_background_color(PRIMARY_COLOR)
 
@@ -62,16 +60,15 @@ class CanSat:
         self.window = sg.Window('CanSat Dashboard', self.layout, background_color=PRIMARY_COLOR, finalize=True)
         self.window.move(0, 0)
 
-        # start at 2 and increment up to 8
+        # self.internalpc is what row the computer is on. This is used to make sure that the row being read actually exists in CSV file
         if(len(self.df) < 1):
             self.internalpc = 1
         else:
             self.internalpc = len(self.df)
 
         self.simulation_mode = False  # Simulation mode flag
-        self.init_graphs()
             
-    def init_graphs(self):
+        # Initializes graphs
         fig_size = (3.8, 3.5)
         self.graphs = {
             'altitude': plt.subplots(figsize=(fig_size)),
@@ -101,20 +98,17 @@ class CanSat:
             canvas_widget.pack(fill='both', expand=True)
             self.graph_canvases[key] = (canvas, canvas_widget)
     
-    def format_key(self, key):
-        """Format the key by replacing underscores with spaces and capitalizing each word."""
-        return key.replace('_', ' ').upper()
-    
+    # Called at Line 249
     def update_graphs(self, new_data):
         self.data["MISSION_TIME"] = str(new_data["time"][-1])
         self.data["GPS_TIME"] = str(new_data["gps_time"][-1])
         self.data["PACKET_COUNT"] = str(new_data["packet_count"][-1])
         self.data["GPS_SATS"] = str(new_data["gps_sat"][-1])
-        # self.data["MISSION_TIME"] = self.getMissionTime()
+
         for key, (fig, ax) in self.graphs.items():
             ax.clear()
             if key in new_data and 'time' in new_data and len(new_data[key]) == len(new_data['time']):
-                formatted_key = self.format_key(key)  # Format the key for display
+                formatted_key = key.replace('_', ' ').upper()  # Format the key by replacing underscores with spaces and capitalizing each word.
                 ax.plot(new_data['time'], new_data[key], color='black')
                 ax.set_xlabel('TIME', color=GRAPH_TEXT_COLOR)
                 ax.set_ylabel(formatted_key, color=GRAPH_TEXT_COLOR)  # Use formatted key here
@@ -125,11 +119,10 @@ class CanSat:
                 plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
             self.graph_canvases[key][0].draw()
 
-    def display_all_graphs(self):
+        # Displays all the new graphs
         for key, (fig, ax) in self.graphs.items():
             canvas, canvas_widget = self.graph_canvases[key]
             canvas.draw()
-
 
     def create_top_banner(self):
         # NOTE: Things like <PRESSURE> will not have values manually inputted, it would be automatically read from the CSV.
@@ -207,11 +200,11 @@ class CanSat:
     def run_gui(self):
         while True:
             start_time = time.perf_counter()
-            event, values = self.window.read(timeout=200) # Change this to adjust timing reading in the file.
+            event, values = self.window.read(timeout=200) # Change int to adjust timing reading in the file.
 
             read_time = time.perf_counter()
             duration = round(read_time-start_time, 5)
-            print(f'Time to run read: {duration} seconds')
+                # print(f'Time to run read: {duration} seconds')
 
             if event == sg.WIN_CLOSED or event == '':
                 break
@@ -241,31 +234,21 @@ class CanSat:
                 
                 new_data = self.read_latest_csv_data(data_one_col) # Function defintion at Line 263
                 
-                
                 new_data_time = time.perf_counter()
                 duration = round(new_data_time-start_time, 5)
-                print(f'Time to run self.read_latest_csv_data(): {duration} seconds')
+                    # print(f'Time to run self.read_latest_csv_data(): {duration} seconds')
 
+                # Update header elements
                 self.update_graphs(new_data) # Function definition at Line 102
                 update_graphs_time = time.perf_counter()
                 duration = round(update_graphs_time-new_data_time, 5)
-                print(f'Time to run self.update_graphs(new_data): {duration} seconds')
-
-                self.display_all_graphs() # Function definition at Line 119
-                display_all_graphs_time = time.perf_counter()
-                duration = round(display_all_graphs_time-update_graphs_time, 5)
-                print(f'Time to run self.display_all_graphs(): {duration} seconds')
+                    # print(f'Time to run self.update_graphs(new_data): {duration} seconds')
                 
-                # Update GUI elements
-                self.update_gui_elements() # Function defintion at Line 339
+                # Update header elements
+                self.update_header_elements() # Function defintion at Line 339
                 end_time = time.perf_counter()
                 duration = round(end_time-start_time, 5)
-
-
-                # The actual time is much longer than intended, it takes 2 seconds for the program to run through which is casuing 
-                # the graphs to update very choppy. Average run is 2 seconds, need it to be 1 second.
-
-                print(f'Refresh rate: {duration} seconds') # Make a try-catch that just tells the program to wait a little bit.
+                    # print(f'Refresh rate: {duration} seconds') # Make a try-catch that just tells the program to wait a little bit.
             
         self.window.close()
 
@@ -274,9 +257,7 @@ class CanSat:
     def read_latest_csv_data(self, data_one_col):
         if self.simulation_mode:
             pass
-        
-        #self.df = pd.read_csv(self.csv_file_path)
-        # Look into packet count for CSV as internalpc incrememnts by 1 by the time the CSV gets two new rows hence the slow increase of the size of last_rows
+    
         if (len(data_one_col) > 7):
             last_rows = pd.read_csv('SimCSV.csv', header=None, names=["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "MODE", "STATE", "ALTITUDE",
                 "AIR_SPEED", "HS_DEPLOYED", "PC_DEPLOYED", "TEMPERATURE", "PRESSURE", "VOLTAGE",
@@ -307,61 +288,10 @@ class CanSat:
             'rot_z': last_rows['ROT_Z'].tolist()
             # Add any additional fields you need
         }
-
         return graph_data
-
-
-        '''
-        # Re-read the CSV file to get the latest data
-        self.df = pd.read_csv(self.csv_file_path)
-
-        # Get the latest row
-        latest_data = self.df.iloc[-1]
-
-        # Update the self.data dictionary with the latest data
-        self.data['MISSION_TIME'] = latest_data['MISSION_TIME']
-        self.data['PACKET_COUNT'] = latest_data['PACKET_COUNT']
-        self.data['MODE'] = latest_data['MODE']
-        self.data['STATE'] = latest_data['STATE']
-        self.data['ALTITUDE'] = latest_data['ALTITUDE']
-        self.data['AIR_SPEED'] = latest_data['AIR_SPEED']
-        self.data['HS_DEPLOYED'] = latest_data['HS_DEPLOYED']
-        self.data['PC_DEPLOYED'] = latest_data['PC_DEPLOYED']
-        self.data['TEMPERATURE'] = latest_data['TEMPERATURE']
-        self.data['PRESSURE'] = latest_data['PRESSURE']
-        self.data['VOLTAGE'] = latest_data['VOLTAGE']
-        self.data['GPS_TIME'] = latest_data['GPS_TIME']
-        self.data['GPS_ALTITUDE'] = latest_data['GPS_ALTITUDE']
-        self.data['GPS_LATITUDE'] = latest_data['GPS_LATITUDE']
-        self.data['GPS_LONGITUDE'] = latest_data['GPS_LONGITUDE']
-        self.data['GPS_SATS'] = latest_data['GPS_SATS']
-        self.data['TILT_X'] = latest_data['TILT_X']
-        self.data['ROT_Z'] = latest_data['ROT_Z']
-        self.data['CMD_ECHO'] = latest_data['CMD_ECHO']
-
-        # Create a dictionary to hold the data for the graphs
-        graph_data = {
-            'time': [latest_data['MISSION_TIME']],
-            'altitude': [latest_data['ALTITUDE']],
-            'air_speed': [latest_data['AIR_SPEED']],
-            'temperature': [latest_data['TEMPERATURE']],
-            'pressure': [latest_data['PRESSURE']],
-            'voltage': [latest_data['VOLTAGE']],
-            'tilt_x': [latest_data['TILT_X']],
-            'tilt_y': [latest_data['TILT_Y']],
-            'rot_z': [latest_data['ROT_Z']],
-            'gps_altitude': [latest_data['GPS_ALTITUDE']],
-            'gps_latitude': [latest_data['GPS_LATITUDE']],
-            'gps_longitude': [latest_data['GPS_LONGITUDE']]
-            # Add other fields if needed
-        }
-
-        return graph_data
-'''
-
-
-    def update_gui_elements(self):
-        # Update GUI elements with the latest data
+    
+    # Updates any text-based data at the top of the GUI
+    def update_header_elements(self):
         self.window['TEAM_ID'].update('Team ID: ' + str(self.data['TEAM_ID']))
         self.window['MISSION_TIME'].update('Mission Time: ' + self.data['MISSION_TIME'])
         self.window['PC1'].update('Packet Count: ' + str(self.data['PACKET_COUNT']))
@@ -372,29 +302,12 @@ class CanSat:
         self.window['GPS_SATS'].update('GPS Sat: ' + str(self.data['GPS_SATS']))
         self.window['CMD_ECHO'].update('CMD Echo: ' + self.data['CMD_ECHO'])
         self.window['GPS_TIME'].update('GPS Time: ' + self.data['GPS_TIME'])
-        # Add additional updates for other parameters
-        #DO NOT INCLUDE
-        '''
-        self.window['altitude'].update('Altitude: ' + str(self.data['ALTITUDE']))
-        self.window['AIR_SPEED'].update('Air Speed: ' + str(self.data['AIR_SPEED']))
-        self.window['TEMPERATURE'].update('Temperature: ' + str(self.data['TEMPERATURE']))
-        self.window['PRESSURE'].update('Pressure: ' + str(self.data['PRESSURE']))
-        self.window['VOLTAGE'].update('Voltage: ' + str(self.data['VOLTAGE']))
-        self.window['GPS_ALTITUDE'].update('GPS Altitude: ' + str(self.data['GPS_ALTITUDE']))
-        self.window['GPS_LATITUDE'].update('GPS Latitude: ' + str(self.data['GPS_LATITUDE']))
-        self.window['GPS_LONGITUDE'].update('GPS Longitude: ' + str(self.data['GPS_LONGITUDE']))
-        self.window['TILT_X'].update('Tilt X: ' + str(self.data['TILT_X']))
-        self.window['TILT_Y'].update('Tilt Y: ' + str(self.data['TILT_Y']))
-        self.window['ROT_Z'].update('Rot Z: ' + str(self.data['ROT_Z']))
-        '''
-
 
 def main():
     # Use SimCSV.csv if you are able to run the python skit alongside the VSCode
     # Else use Sample_Flight.csv
     csv_file_path = "SimCSV.csv" # Have it depend on the mode. I think we might have to create a csv file here too?
     cansat = CanSat(csv_file_path)
-    start = time.time()
     cansat.run_gui()
 
 if __name__ == '__main__':
