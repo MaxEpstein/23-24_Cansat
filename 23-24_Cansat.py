@@ -109,7 +109,7 @@ class CanSat:
             sg.Button('Simulation Mode', font=FONT_BUTTON, key='Sim_Mode', image_filename="button_simulate_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
             sg.Button(font=FONT_BUTTON, button_color=PRIMARY_COLOR, border_width=0, image_filename="close_button_edited.png", pad=(5, 0), expand_x=True, expand_y = False),
             sg.Text("Eggsplorer rocks!!!!", text_color=PRIMARY_COLOR, background_color=PRIMARY_COLOR), # Just extra text to make CMD section right justified 
-            sg.Text('CMD', font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, size=(5, 1), text_color=TEXT_COLOR, justification='right', pad=(0,0)),
+            sg.Text('Input', font=(FONT_MAIN, 20), background_color=PRIMARY_COLOR, size=(5, 1), text_color=TEXT_COLOR, justification='right', pad=(0,0)),
             sg.DD(dropdown_options, font=(FONT_MAIN, 20), size=(26, 15), pad=(0,0)),
             sg.Button('Send', font=FONT_BUTTON, size=(5, 1), pad=(0,0))
         ]
@@ -218,12 +218,27 @@ class CanSat:
             ax.clear()
             if key in new_data and 'time' in new_data and len(new_data[key]) == len(new_data['time']):
                 formatted_key = key.replace('_', ' ').upper()  # Format the key by replacing underscores with spaces and capitalizing each word.
+
                 ax.plot(new_data['time'], new_data[key], color='black')
-                ax.set_xlabel('TIME', color=GRAPH_TEXT_COLOR)
+                ax.set_title(f'{formatted_key} VS TIME', color=GRAPH_TEXT_COLOR, fontweight='bold')
+
+                ax.set_xlabel('TIME (s)', color=GRAPH_TEXT_COLOR)
+
+                if formatted_key == "ALTITUDE":
+                    formatted_key += " (m)"
+                elif formatted_key == "TEMPERATURE":
+                    formatted_key += " (c)"
+                elif formatted_key == "VOLTAGE":
+                    formatted_key += " (volts)"
+                elif formatted_key == "AIR SPEED":
+                    formatted_key += " (m/s)"
+                elif formatted_key == "PRESSURE":
+                    formatted_key += " (Pa)"
+                else:
+                    formatted_key += " (deg)"
                 ax.set_ylabel(formatted_key, color=GRAPH_TEXT_COLOR)  # Use formatted key here
                 
                 # Set the title with bold font
-                ax.set_title(f'{formatted_key} VS TIME', color=GRAPH_TEXT_COLOR, fontweight='bold')
                 
                 plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
             self.graph_canvases[key][0].draw()
