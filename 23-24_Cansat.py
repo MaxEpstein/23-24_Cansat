@@ -54,7 +54,17 @@ class CanSat:
             'CMD_ECHO': "CXON" # Text of the last command recieved and processed by the CanSat.
         }
         self.csv_file_path = csv_file_path
-        self.df = pd.read_csv(self.csv_file_path)
+
+        # Initialized so that the program don't crash
+        self.df = '0'
+
+        # Checks to see if the csv exists before trying to start updating variables.
+        try:
+             f = open(self.csv_file_path)
+             self.df = pd.read_csv(self.csv_file_path) # Checks to see if the csv file exists.
+        except OSError:
+            print("Could not open/read file:", self.csv_file_path) 
+
         self.graph_canvases = {}
         self.layout = self.create_gui_layout()
         self.window = sg.Window('CanSat Dashboard', self.layout, background_color=PRIMARY_COLOR, finalize=True)
