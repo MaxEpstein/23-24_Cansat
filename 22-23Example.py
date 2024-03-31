@@ -336,7 +336,7 @@ fileLength = 0
 #open up serial ports and such for Radio communication
 ser = serial.Serial()
 ser.baudrate = 19200
-ser.port = 'COM10'
+ser.port = 'COM4'
 ser
 ser.open()
 print(ser)
@@ -393,7 +393,7 @@ while True:
         #read from the csv file line by line and send to payload at 1s
         if(wait == True):
             if (simDataRead == False):
-                simData = (pd.read_csv('SimPressureValues.csv', header=0, names=["Pressure"])).to_numpy()
+                simData = (pd.read_csv('Sample_Flight.csv', header=0, names=["Pressure"])).to_numpy()
                 #print (simData
                 simDataRead = True
                 currentTime = time.time()

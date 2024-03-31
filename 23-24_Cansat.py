@@ -13,6 +13,8 @@ import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import time
+import csv
+import serial
 
 # Define a consistent color scheme and fonts
 # Updated color constants
@@ -186,13 +188,13 @@ class CanSat:
         # Checks to see if there are more than 7 rows into the CSV yet. 
         if (len(data_one_col) > 7):
             # > than 7 rows in the CSV so only the last 7 rows are read
-            last_rows = pd.read_csv('SimCSV.csv', header=None, names=["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "MODE", "STATE", "ALTITUDE",
+            last_rows = pd.read_csv(self.csv_file_path, header=None, names=["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "MODE", "STATE", "ALTITUDE",
                 "AIR_SPEED", "HS_DEPLOYED", "PC_DEPLOYED", "TEMPERATURE", "PRESSURE", "VOLTAGE",
                 "GPS_TIME","GPS_LATITUDE", "GPS_LONGITUDE", 
                 "GPS_ALTITUDE", "GPS_SATS","TILT_X", "TILT_Y", "ROT_Z", "CMD_ECHO"], skiprows=len(data_one_col)-7)
         else:
             # <= 7 rows in the CSV, just skips the header row. 
-            last_rows = pd.read_csv('SimCSV.csv', header=None, names=["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "MODE", "STATE", "ALTITUDE",
+            last_rows = pd.read_csv(self.csv_file_path, header=None, names=["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "MODE", "STATE", "ALTITUDE",
                 "AIR_SPEED", "HS_DEPLOYED", "PC_DEPLOYED", "TEMPERATURE", "PRESSURE", "VOLTAGE",
                 "GPS_TIME","GPS_LATITUDE", "GPS_LONGITUDE", 
                 "GPS_ALTITUDE", "GPS_SATS","TILT_X", "TILT_Y", "ROT_Z", "CMD_ECHO"], skiprows=1)
@@ -272,7 +274,42 @@ class CanSat:
         self.window['GPS_TIME'].update('GPS Time: ' + self.data['GPS_TIME'])
 
     def run_gui(self):
+        # create the serial port for radio communication
+        ser = serial.Serial()
+        ser.baudrate = 19200
+        ser.port = 'COM4'
+        ser
+        ser.open()
+        print(ser)
+
+        # create the initial csv file and write the header
+        file = open(self.csv_file_path, 'w', newline='')
+        writer = csv.writer(file)
+
+        writer.writerow(["TEAM_ID","MISSION_TIME","PACKET_COUNT","MODE","STATE","ALTITUDE","AIR_SPEED","HS_DEPLOYED","PC_DEPLOYED","TEMPERATURE",
+                "PRESSURE","VOLTAGE","GPS_TIME","GPS_ALTITUDE","GPS_LATITUDE","GPS_LONGITUDE","GPS_SATS","TILT_X","TILT_Y",
+                "ROT_Z","CMD_ECHO"])
+        
+        file.close()
+
+
         while True:
+
+            # check for new incomming message from radio
+            with open(self.csv_file_path, 'a', newline='') as file:
+                writer = csv.writer(file)
+                    
+                #continuously poll for data
+                xbee_message = str("hh")
+                if(ser.in_waiting >0):
+                    xbee_message = (ser.readline().decode('utf-8'))
+                
+                    print(xbee_message)
+                    #write the row to the csv file
+                    xbee_message2=xbee_message.strip().split(',')
+                    writer.writerow(xbee_message2)
+
+
             start_time = time.perf_counter()
             event, values = self.window.read(timeout=200) # Change int to adjust timing reading in the file.
 
@@ -295,10 +332,14 @@ class CanSat:
 
             if event == "Send":
                 print("Send Button Pressed")
+                print(values[0])
+                time.sleep(1)
+                #send it through the radio
+                ser.write(bytes(values[0],'utf-8'))
 
             # Read and update graphs with new data                
             try:
-                data_one_col = pd.read_csv('SimCSV.csv', usecols=["PACKET_COUNT"]) # Checks to see if the csv file can be read.
+                data_one_col = pd.read_csv(self.csv_file_path, usecols=["PACKET_COUNT"]) # Checks to see if the csv file can be read.
             except:
                 print("CAN'T READ") # If it can't be read, skips everything below this line.
                 continue
@@ -330,7 +371,7 @@ class CanSat:
 def main():
     # Use SimCSV.csv if you are able to run the python skit alongside the VSCode
     # Else use Sample_Flight.csv
-    csv_file_path = "SimCSV.csv" # Have it depend on the mode. I think we might have to create a csv file here too?
+    csv_file_path = "Flight_2031.csv" # Have it depend on the mode. I think we might have to create a csv file here too?
     cansat = CanSat(csv_file_path)
     cansat.run_gui()
 
