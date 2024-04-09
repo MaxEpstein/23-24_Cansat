@@ -302,12 +302,15 @@ class CanSat:
                 #continuously poll for data
                 xbee_message = str("hh")
                 if(ser.in_waiting >0):
-                    xbee_message = (ser.readline().decode('utf-8'))
+                    try:
+                        xbee_message = (ser.readline().decode('utf-8'))
                 
-                    print(xbee_message)
-                    #write the row to the csv file
-                    xbee_message2=xbee_message.strip().split(',')
-                    writer.writerow(xbee_message2)
+                        print(xbee_message)
+                        #write the row to the csv file
+                        xbee_message2=xbee_message.strip().split(',')
+                        writer.writerow(xbee_message2)
+                    except:
+                        print("error reading in packet")
 
 
             start_time = time.perf_counter()
