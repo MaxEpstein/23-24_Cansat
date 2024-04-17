@@ -116,8 +116,8 @@ class CanSat:
         return [
             sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(15, 1), justification='left', key='TEAM_ID', pad=(0, 0)),
             sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='MISSION_TIME', pad=(0, 0)),
-            sg.Button('Calibrate', font=FONT_BUTTON, image_filename="button_calibrate_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
-            sg.Button('Connect', font=FONT_BUTTON, image_filename="button_connect_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
+            # sg.Button('Calibrate', font=FONT_BUTTON, image_filename="button_calibrate_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
+            # sg.Button('Connect', font=FONT_BUTTON, image_filename="button_connect_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
             sg.Button('Simulation Mode', font=FONT_BUTTON, key='Sim_Mode', image_filename="button_simulate_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
             sg.Button(font=FONT_BUTTON, button_color=PRIMARY_COLOR, border_width=0, image_filename="close_button_edited.png", pad=(5, 0), expand_x=True, expand_y = False),
             sg.Text("Eggsplorer rocks!!!!", text_color=PRIMARY_COLOR, background_color=PRIMARY_COLOR), # Just extra text to make CMD section right justified 
@@ -327,11 +327,11 @@ class CanSat:
                 self.simulation_mode = not self.simulation_mode
                 print(f"Simulation Mode {'Enabled' if self.simulation_mode else 'Disabled'}")
 
-            if event == 'Calibrate':
+            """ if event == 'Calibrate':
                 print("Calibrate Button Pressed")
 
             if event == 'Connect':
-                print("Connect Button Pressed")
+                print("Connect Button Pressed") """
 
             if event == "Send":
                 print("Send Button Pressed")
