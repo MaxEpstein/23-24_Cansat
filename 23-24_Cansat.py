@@ -202,19 +202,23 @@ class CanSat:
         graph_data = {
             'time': last_rows['MISSION_TIME'].tolist(),
             'packet_count': last_rows['PACKET_COUNT'].tolist(),
+            'mode': last_rows['MODE'].tolist(),
+            'state': last_rows['STATE'].tolist(),
             'altitude': last_rows['ALTITUDE'].tolist(),
             'air_speed': last_rows['AIR_SPEED'].tolist(),       # does not exist in Flight_1032.csv hence the error
+            'hs_deployed': last_rows['HS_DEPLOYED'].tolist(),
+            'pc_deployed': last_rows["PC_DEPLOYED"].tolist(),
             'temperature': last_rows['TEMPERATURE'].tolist(),
             'pressure': last_rows['PRESSURE'].tolist(),
             'voltage': last_rows['VOLTAGE'].tolist(),
-            'gps_altitude': last_rows['GPS_ALTITUDE'].tolist(),
             'gps_time': last_rows['GPS_TIME'].tolist(),
+            'gps_altitude': last_rows['GPS_ALTITUDE'].tolist(),
             'gps_latitude': last_rows['GPS_LATITUDE'].tolist(),
             'gps_longitude': last_rows['GPS_LONGITUDE'].tolist(),
             'gps_sat': last_rows["GPS_SATS"].tolist(),
             'tilt_x': last_rows['TILT_X'].tolist(),
             'tilt_y': last_rows['TILT_Y'].tolist(),
-            'rot_z': last_rows['ROT_Z'].tolist()
+            'rot_z': last_rows['ROT_Z'].tolist(),\
             # Add any additional fields you need
         }
         return graph_data
@@ -222,8 +226,12 @@ class CanSat:
     # Updates all the graphs on the GUI
     def update_graphs(self, new_data):
         self.data["MISSION_TIME"] = str(new_data["time"][-1])
-        self.data["GPS_TIME"] = str(new_data["gps_time"][-1])
         self.data["PACKET_COUNT"] = str(new_data["packet_count"][-1])
+        self.data["MODE"] = str(new_data['mode'][-1])
+        self.data["STATE"] = str(new_data["state"][-1])
+        self.data["HS_DEPLOYED"] = str(new_data["hs_deloyed"][-1])
+        self.data["PC_DEPLOYED"] = str(new_data["pc_deployed"][-1])
+        self.data["GPS_TIME"] = str(new_data["gps_time"][-1])
         self.data["GPS_SATS"] = str(new_data["gps_sat"][-1])
 
         for key, (fig, ax) in self.graphs.items():
@@ -340,7 +348,7 @@ class CanSat:
                 #send it through the radio
                 ser.write(bytes(values[0],'utf-8'))
 
-            # Read and update graphs with new data                
+            # Read and graphs with new data                
             try:
                 data_one_col = pd.read_csv(self.csv_file_path, usecols=["PACKET_COUNT"]) # Checks to see if the csv file can be read.
             except:
