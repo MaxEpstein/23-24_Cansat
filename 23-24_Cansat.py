@@ -285,7 +285,7 @@ class CanSat:
         # create the serial port for radio communication
         ser = serial.Serial()
         ser.baudrate = 19200
-        ser.port = 'COM4'
+        ser.port = 'COM5'
         ser
         ser.open()
         print(ser)
