@@ -218,7 +218,8 @@ class CanSat:
             'gps_sat': last_rows["GPS_SATS"].tolist(),
             'tilt_x': last_rows['TILT_X'].tolist(),
             'tilt_y': last_rows['TILT_Y'].tolist(),
-            'rot_z': last_rows['ROT_Z'].tolist(),\
+            'rot_z': last_rows['ROT_Z'].tolist(),
+            'cmd_echo': last_rows['CMD_ECHO'].tolist()
             # Add any additional fields you need
         }
         return graph_data
@@ -229,10 +230,11 @@ class CanSat:
         self.data["PACKET_COUNT"] = str(new_data["packet_count"][-1])
         self.data["MODE"] = str(new_data['mode'][-1])
         self.data["STATE"] = str(new_data["state"][-1])
-        self.data["HS_DEPLOYED"] = str(new_data["hs_deloyed"][-1])
+        self.data["HS_DEPLOYED"] = str(new_data["hs_deployed"][-1])
         self.data["PC_DEPLOYED"] = str(new_data["pc_deployed"][-1])
         self.data["GPS_TIME"] = str(new_data["gps_time"][-1])
         self.data["GPS_SATS"] = str(new_data["gps_sat"][-1])
+        self.data["CMD_ECHO"] = str(new_data['cmd_echo'][-1])
 
         for key, (fig, ax) in self.graphs.items():
             ax.clear()
@@ -278,14 +280,15 @@ class CanSat:
         self.window['PC_DEPLOYED'].update('PC Deploy: ' + self.data['PC_DEPLOYED'])
         self.window['HS_DEPLOYED'].update('HS Deploy: ' + self.data['HS_DEPLOYED'])
         self.window['GPS_SATS'].update('GPS Sat: ' + str(self.data['GPS_SATS']))
-        self.window['CMD_ECHO'].update('CMD Echo: ' + self.data['CMD_ECHO'])
         self.window['GPS_TIME'].update('GPS Time: ' + self.data['GPS_TIME'])
+        self.window['CMD_ECHO'].update('CMD Echo: ' + self.data['CMD_ECHO'])
+
 
     def run_gui(self):
         # create the serial port for radio communication
         ser = serial.Serial()
         ser.baudrate = 19200
-        ser.port = 'COM5'
+        ser.port = 'COM4'
         ser
         ser.open()
         print(ser)
@@ -318,7 +321,7 @@ class CanSat:
                         xbee_message2=xbee_message.strip().split(',')
                         writer.writerow(xbee_message2)
                     except:
-                        print("error reading in packet")
+                        print("Error reading in packet.")
 
 
             start_time = time.perf_counter()
@@ -326,7 +329,6 @@ class CanSat:
 
             read_time = time.perf_counter()
             duration = round(read_time-start_time, 5)
-                # print(f'Time to run read: {duration} seconds')
 
             if event == sg.WIN_CLOSED or event == '':
                 break
@@ -334,12 +336,6 @@ class CanSat:
             if event == 'Sim_Mode': # Change this to Sim_Mode to get this branch to work
                 self.simulation_mode = not self.simulation_mode
                 print(f"Simulation Mode {'Enabled' if self.simulation_mode else 'Disabled'}")
-
-            """ if event == 'Calibrate':
-                print("Calibrate Button Pressed")
-
-            if event == 'Connect':
-                print("Connect Button Pressed") """
 
             if event == "Send":
                 print("Send Button Pressed")
@@ -363,19 +359,16 @@ class CanSat:
                 new_data = self.read_latest_csv_data(data_one_col) # Function defintion at Line 198
                 new_data_time = time.perf_counter()
                 duration = round(new_data_time-start_time, 5)
-                    # print(f'Time to run self.read_latest_csv_data(): {duration} seconds')
 
                 # Update header elements
                 self.update_graphs(new_data) # Function definition at Line 172
                 update_graphs_time = time.perf_counter()
                 duration = round(update_graphs_time-new_data_time, 5)
-                    # print(f'Time to run self.update_graphs(new_data): {duration} seconds')
-                
+
                 # Update header elements
                 self.update_header_elements() # Function defintion at Line 237
                 end_time = time.perf_counter()
                 duration = round(end_time-start_time, 5)
-                    # print(f'Refresh rate: {duration} seconds') # Make a try-catch that just tells the program to wait a little bit.
             
         self.window.close()
 
