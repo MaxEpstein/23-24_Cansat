@@ -70,6 +70,8 @@ class CanSat:
         self.graph_canvases = {}
         self.layout = self.create_gui_layout()
         self.window = sg.Window('CanSat Dashboard', self.layout, background_color=PRIMARY_COLOR, finalize=True)
+        self.window.Maximize()
+        self.window.TKroot.resizable(True, True)
         self.window.move(0, 0)
 
         # self.internalpc is what row the computer is on. This is used to make sure that the row being read actually exists in CSV file
@@ -81,7 +83,7 @@ class CanSat:
         self.simulation_mode = False  # Simulation mode flag
             
         # Initializes graphs
-        fig_size = (3.8, 3.5)
+        fig_size = (self.window.size[0]/350, self.window.size[1]/250) # Change the numerator in order to change the size of the graphs. 
         self.graphs = {
             'altitude': plt.subplots(figsize=(fig_size)),
             'air_speed': plt.subplots(figsize=(fig_size)),
@@ -116,8 +118,6 @@ class CanSat:
         return [
             sg.Text('Team ID: ' + str(self.data['TEAM_ID']), font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(15, 1), justification='left', key='TEAM_ID', pad=(0, 0)),
             sg.Text(self.data['MISSION_TIME'], font=FONT_TITLE, background_color=PRIMARY_COLOR, text_color=TEXT_COLOR, size=(20, 1), justification='left', key='MISSION_TIME', pad=(0, 0)),
-            # sg.Button('Calibrate', font=FONT_BUTTON, image_filename="button_calibrate_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
-            # sg.Button('Connect', font=FONT_BUTTON, image_filename="button_connect_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
             sg.Button('Simulation Mode', font=FONT_BUTTON, key='Sim_Mode', image_filename="button_simulate_edited.png", border_width=0, button_color=PRIMARY_COLOR, pad=(5, 0)),
             sg.Button(font=FONT_BUTTON, button_color=PRIMARY_COLOR, border_width=0, image_filename="close_button_edited.png", pad=(5, 0), expand_x=True, expand_y = False),
             sg.Text("Eggsplorer rocks!!!!", text_color=PRIMARY_COLOR, background_color=PRIMARY_COLOR), # Just extra text to make CMD section right justified 
@@ -143,7 +143,7 @@ class CanSat:
         ]
 
     def create_fourth_row(self):
-        graph_size = (250, 250)  # Adjust size as needed
+        graph_size = (300, 300)  # Adjust size as needed
         return [
             sg.Canvas(key='graph_canvas_altitude', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0)),
             sg.Canvas(key='graph_canvas_air_speed', background_color=GRAPH_BACKGROUND_COLOR, size=graph_size, pad=(0,0)),
@@ -171,12 +171,12 @@ class CanSat:
 
     def create_gui_layout(self):
         layout = [
-            [sg.Column([self.create_top_banner()], pad=(4,4))],
-            [sg.Column([self.create_second_row()], pad=(4,4))],
-            [sg.Column([self.create_third_row()], pad=(4,4))],
-            [sg.Column([self.create_fourth_row()], pad=(4,4))],
-            [sg.Column([self.create_fifth_row()], pad=(4,4))],
-            [sg.Column([self.create_sixth_row()], pad=(4,4))],
+            [sg.Column([self.create_top_banner()], pad=(4,4), element_justification='center')],
+            [sg.Column([self.create_second_row()], pad=(4,4), element_justification='center')],
+            [sg.Column([self.create_third_row()], pad=(4,4), element_justification='center')],
+            [sg.Column([self.create_fourth_row()], pad=(4,4), element_justification='center', expand_x=True, expand_y=True)],
+            [sg.Column([self.create_fifth_row()], pad=(4,4), element_justification='center', expand_x=True, expand_y=True)],
+            [sg.Column([self.create_sixth_row()], pad=(4,4), element_justification='center', expand_x=True, expand_y=True)],
         ]
         return layout   
     
@@ -288,10 +288,10 @@ class CanSat:
         # create the serial port for radio communication
         ser = serial.Serial()
         ser.baudrate = 19200
-        ser.port = 'COM4'
+        ser.port = 'COM5'
         ser
         ser.open()
-        print(ser)
+        # print(ser)
 
         # create the initial csv file and write the header
         file = open(self.csv_file_path, 'w', newline='')
